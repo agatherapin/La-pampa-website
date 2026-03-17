@@ -4,8 +4,21 @@
 
 const { neon } = require("@neondatabase/serverless");
 const { verifyAuth } = require("./_auth");
+const { getClientIp, isJsonRequest, rateLimit, setSecurityHeaders } = require("./_security");
 
 module.exports = async function handler(req, res) {
+  setSecurityHeaders(res);
+
+  // Best-effort rate limit for admin API usage.
+  const ip = getClientIp(req);
+  const rl = rateLimit({ key: `admin_api:${ip}`, limit: 120, windowMs: 60_000 });
+  res.setHeader("X-RateLimit-Limit", "120");
+  res.setHeader("X-RateLimit-Remaining", String(rl.remaining));
+  res.setHeader("X-RateLimit-Reset", String(Math.floor(rl.resetAt / 1000)));
+  if (!rl.allowed) {
+    return res.status(429).json({ error: "Trop de requêtes, réessaie plus tard" });
+  }
+
   // Vérifier l'authentification
   const user = verifyAuth(req);
   if (!user) {
@@ -31,6 +44,10 @@ module.exports = async function handler(req, res) {
 
   // ── POST : créer un article ──
   if (req.method === "POST") {
+    if (!isJsonRequest(req)) {
+      return res.status(415).json({ error: "Content-Type must be application/json" });
+    }
+
     const { title, slug, description, content, cover_image, video_url, status, gallery } = req.body;
 
     if (!title || !slug) {

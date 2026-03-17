@@ -3,8 +3,11 @@
 // POST /api/admin/me — déconnexion (logout)
 
 const { verifyAuth } = require("./_auth");
+const { setSecurityHeaders } = require("./_security");
 
 module.exports = async function handler(req, res) {
+  setSecurityHeaders(res);
+
   // GET : vérifier l'auth
   if (req.method === "GET") {
     const user = verifyAuth(req);
@@ -16,10 +19,11 @@ module.exports = async function handler(req, res) {
 
   // DELETE : logout (supprimer le cookie)
   if (req.method === "DELETE") {
-    res.setHeader(
-      "Set-Cookie",
-      `token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0;`
-    );
+    // Clear both the legacy cookie name and the recommended __Host- cookie.
+    res.setHeader("Set-Cookie", [
+      `token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0;`,
+      `__Host-token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0;`,
+    ]);
     return res.status(200).json({ success: true });
   }
 
