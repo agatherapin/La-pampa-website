@@ -4,26 +4,29 @@
 
 const jwt = require("jsonwebtoken");
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const { parseCookies, requireStrongJwtSecret } = require("./_security");
 
 function verifyAuth(req) {
-  // Cherche le token dans le cookie ou le header Authorization
-  const cookie = req.headers.cookie || "";
-  const tokenFromCookie = cookie
-    .split(";")
-    .map((c) => c.trim())
-    .find((c) => c.startsWith("token="));
+  let JWT_SECRET;
+  try {
+    JWT_SECRET = requireStrongJwtSecret();
+  } catch {
+    return null;
+  }
 
-  const token = tokenFromCookie
-    ? tokenFromCookie.split("=")[1]
-    : req.headers.authorization?.replace("Bearer ", "");
+  // Cherche le token dans le cookie ou le header Authorization
+  const cookies = parseCookies(req.headers.cookie || "");
+  const tokenFromCookie = cookies["__Host-token"] || cookies.token;
+  const tokenFromHeader = req.headers.authorization?.replace(/^Bearer\s+/i, "");
+  const token = tokenFromCookie || tokenFromHeader;
 
   if (!token) {
     return null;
   }
 
   try {
-    return jwt.verify(token, JWT_SECRET);
+    // Pin algorithms to avoid alg=none / confusion attacks.
+    return jwt.verify(token, JWT_SECRET, { algorithms: ["HS256"] });
   } catch {
     return null;
   }
