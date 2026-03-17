@@ -1,8 +1,10 @@
-cat > .gitignore << 'EOF'
 node_modules/
 .vercel/
 .env
 .env.local
 originals_backup/
 convert-to-webp.py
-EOF
+
+# macOS
+.DS_Store
+**/.DS_Store
