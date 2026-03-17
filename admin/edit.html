@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Éditeur — LA PAMPA</title>
+    <style>
+        @font-face {
+            font-family: 'Neue Haas Grotesk';
+            src: url('../fonts/NeueHaasDisplayRoman.woff2') format('woff2');
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: 'Neue Haas Grotesk';
+            src: url('../fonts/NeueHaasDisplayMediu.woff2') format('woff2');
+            font-weight: 500;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Neue Haas Grotesk', -apple-system, sans-serif;
+            background: #F5F5F5;
+            color: #0A0A0A;
+            padding: 40px 20px 80px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* ── Header ── */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 48px;
+        }
+
+        header h1 {
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        header h1 span { color: #FF3D71; }
+
+        .back-link {
+            font-size: 12px;
+            color: #888;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .back-link:hover { color: #0A0A0A; }
+
+        /* ── Form ── */
+        .field {
+            margin-bottom: 28px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .field input,
+        .field textarea,
+        .field select {
+            width: 100%;
+            padding: 12px 0;
+            font-family: inherit;
+            font-size: 15px;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            background: transparent;
+            outline: none;
+            transition: border-color 0.2s;
+            resize: vertical;
+        }
+
+        .field input:focus,
+        .field textarea:focus,
+        .field select:focus {
+            border-bottom-color: #0A0A0A;
+        }
+
+        .field textarea {
+            min-height: 200px;
+            font-size: 13px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            line-height: 1.6;
+        }
+
+        .field select {
+            cursor: pointer;
+            appearance: none;
+            padding-right: 24px;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23888' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 4px center;
+        }
+
+        .field-hint {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 6px;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        /* ── Gallery ── */
+        .gallery-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .gallery-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .gallery-row input {
+            flex: 1;
+            padding: 8px 0;
+            font-size: 13px;
+        }
+
+        .gallery-remove {
+            font-size: 18px;
+            color: #ccc;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
+        .gallery-remove:hover { color: #FF3D71; }
+
+        .btn-add-image {
+            font-family: inherit;
+            font-size: 12px;
+            color: #888;
+            background: none;
+            border: 1px dashed #ddd;
+            padding: 8px 16px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.15s;
+        }
+
+        .btn-add-image:hover {
+            border-color: #0A0A0A;
+            color: #0A0A0A;
+        }
+
+        /* ── Actions ── */
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn {
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 12px 24px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #0A0A0A;
+            color: #F5F5F5;
+        }
+
+        .btn-primary:hover { background: #FF3D71; }
+
+        .btn-secondary {
+            background: transparent;
+            color: #888;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            border-color: #0A0A0A;
+            color: #0A0A0A;
+        }
+
+        .message {
+            margin-top: 16px;
+            font-size: 13px;
+            display: none;
+        }
+
+        .message.success { color: #2E7D32; }
+        .message.error { color: #FF3D71; }
+
+        .loading {
+            text-align: center;
+            padding: 60px 0;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>La Pampa <span>· <span id="page-mode">Nouvel article</span></span></h1>
+            <a href="/admin/" class="back-link">← Dashboard</a>
+        </header>
+
+        <form id="article-form">
+            <div class="field">
+                <label>Titre</label>
+                <input type="text" id="title" required placeholder="Mon article…">
+            </div>
+
+            <div class="field">
+                <label>Slug (URL)</label>
+                <input type="text" id="slug" required placeholder="mon-article">
+                <div class="field-hint">Généré automatiquement depuis le titre. Modifiable.</div>
+            </div>
+
+            <div class="field">
+                <label>Description</label>
+                <input type="text" id="description" placeholder="Courte description…">
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label>Image de couverture</label>
+                    <input type="text" id="cover_image" placeholder="img/covers/mon-image.webp">
+                </div>
+                <div class="field">
+                    <label>Vidéo (Vimeo URL)</label>
+                    <input type="text" id="video_url" placeholder="https://vimeo.com/…">
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Statut</label>
+                <select id="status">
+                    <option value="draft">Brouillon</option>
+                    <option value="published">Publié</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Contenu (HTML)</label>
+                <textarea id="content" placeholder="<p>Votre contenu ici…</p>"></textarea>
+                <div class="field-hint">Tu peux utiliser du HTML : &lt;p&gt;, &lt;h3&gt;, &lt;ul&gt;, &lt;br&gt;, etc.</div>
+            </div>
+
+            <div class="field">
+                <label>Galerie d'images</label>
+                <div class="gallery-fields" id="gallery-fields"></div>
+                <button type="button" class="btn-add-image" id="add-image-btn">+ Ajouter une image</button>
+                <div class="field-hint">Chemin vers l'image, ex : img/articles/mon-dossier/photo.webp</div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="submit-btn">Publier</button>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='/admin/'">Annuler</button>
+            </div>
+
+            <p class="message" id="message"></p>
+        </form>
+    </div>
+
+    <script>
+        // ── Auth check ──
+        fetch('/api/admin/me').then(r => {
+            if (!r.ok) window.location.href = '/admin/login.html';
+        });
+
+        // ── Slug auto-generation ──
+        const titleInput = document.getElementById('title');
+        const slugInput = document.getElementById('slug');
+        let slugManuallyEdited = false;
+
+        slugInput.addEventListener('input', () => { slugManuallyEdited = true; });
+
+        titleInput.addEventListener('input', () => {
+            if (slugManuallyEdited) return;
+            slugInput.value = titleInput.value
+                .toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+        });
+
+        // ── Gallery management ──
+        const galleryFields = document.getElementById('gallery-fields');
+
+        function addGalleryRow(value = '') {
+            const row = document.createElement('div');
+            row.className = 'gallery-row';
+            row.innerHTML = `
+                <input type="text" value="${value}" placeholder="img/articles/…" class="gallery-input">
+                <button type="button" class="gallery-remove" onclick="this.parentElement.remove()">×</button>
+            `;
+            galleryFields.appendChild(row);
+        }
+
+        document.getElementById('add-image-btn').addEventListener('click', () => addGalleryRow());
+
+        function getGalleryPaths() {
+            return Array.from(document.querySelectorAll('.gallery-input'))
+                .map(input => input.value.trim())
+                .filter(v => v);
+        }
+
+        // ── Edit mode ──
+        const params = new URLSearchParams(window.location.search);
+        const editId = params.get('id');
+
+        if (editId) {
+            document.getElementById('page-mode').textContent = 'Modifier';
+            document.getElementById('submit-btn').textContent = 'Sauvegarder';
+            slugManuallyEdited = true; // don't auto-generate slug when editing
+
+            fetch(`/api/admin/article/${editId}`)
+                .then(r => r.json())
+                .then(article => {
+                    document.getElementById('title').value = article.title || '';
+                    document.getElementById('slug').value = article.slug || '';
+                    document.getElementById('description').value = article.description || '';
+                    document.getElementById('cover_image').value = article.cover_image || '';
+                    document.getElementById('video_url').value = article.video_url || '';
+                    document.getElementById('status').value = article.status || 'draft';
+                    document.getElementById('content').value = article.content || '';
+
+                    if (article.gallery && article.gallery.length) {
+                        article.gallery.forEach(path => addGalleryRow(path));
+                    }
+                });
+        }
+
+        // ── Submit ──
+        document.getElementById('article-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById('message');
+            msg.style.display = 'none';
+
+            const data = {
+                title: document.getElementById('title').value,
+                slug: document.getElementById('slug').value,
+                description: document.getElementById('description').value,
+                content: document.getElementById('content').value,
+                cover_image: document.getElementById('cover_image').value,
+                video_url: document.getElementById('video_url').value,
+                status: document.getElementById('status').value,
+                gallery: getGalleryPaths()
+            };
+
+            try {
+                const url = editId ? `/api/admin/article/${editId}` : '/api/admin/articles';
+                const method = editId ? 'PUT' : 'POST';
+
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                if (res.ok) {
+                    msg.textContent = editId ? 'Article sauvegardé !' : 'Article créé !';
+                    msg.className = 'message success';
+                    msg.style.display = 'block';
+
+                    if (!editId && result.id) {
+                        // Redirect to edit mode after creation
+                        setTimeout(() => {
+                            window.location.href = `/admin/edit.html?id=${result.id}`;
+                        }, 800);
+                    }
+                } else {
+                    msg.textContent = result.error || 'Erreur';
+                    msg.className = 'message error';
+                    msg.style.display = 'block';
+                }
+            } catch {
+                msg.textContent = 'Erreur réseau';
+                msg.className = 'message error';
+                msg.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — LA PAMPA</title>
+    <style>
+        @font-face {
+            font-family: 'Neue Haas Grotesk';
+            src: url('../fonts/NeueHaasDisplayRoman.woff2') format('woff2');
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: 'Neue Haas Grotesk';
+            src: url('../fonts/NeueHaasDisplayMediu.woff2') format('woff2');
+            font-weight: 500;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Neue Haas Grotesk', -apple-system, sans-serif;
+            background: #F5F5F5;
+            color: #0A0A0A;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* ── Header ── */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 48px;
+        }
+
+        header h1 {
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        header h1 span { color: #FF3D71; }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #0A0A0A;
+            color: #F5F5F5;
+        }
+
+        .btn-primary:hover { background: #FF3D71; }
+
+        .btn-ghost {
+            background: transparent;
+            color: #888;
+            padding: 10px 12px;
+        }
+
+        .btn-ghost:hover { color: #0A0A0A; }
+
+        /* ── Stats ── */
+        .stats {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        /* ── Article list ── */
+        .article-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 16px 0;
+            border-bottom: 1px solid #eee;
+            transition: background 0.15s;
+        }
+
+        .article-item:hover {
+            background: #fff;
+            margin: 0 -12px;
+            padding: 16px 12px;
+            border-radius: 4px;
+        }
+
+        .article-cover {
+            width: 56px;
+            height: 56px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: #ddd;
+            flex-shrink: 0;
+        }
+
+        .article-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .article-title {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .article-meta {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 3px;
+        }
+
+        .status-published {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .status-draft {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .article-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-small {
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: transparent;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.15s;
+            border-radius: 3px;
+        }
+
+        .btn-small:hover {
+            border-color: #0A0A0A;
+            color: #0A0A0A;
+        }
+
+        .btn-small.delete:hover {
+            border-color: #FF3D71;
+            color: #FF3D71;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 60px 0;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 0;
+            color: #888;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>La Pampa <span>· Dashboard</span></h1>
+            <div class="header-actions">
+                <a href="/" class="btn btn-ghost">← Voir le site</a>
+                <a href="/admin/edit.html" class="btn btn-primary">+ Nouvel article</a>
+                <button class="btn btn-ghost" id="logout-btn">Déconnexion</button>
+            </div>
+        </header>
+
+        <div class="stats" id="stats">
+            <div>
+                <div class="stat-number" id="stat-total">—</div>
+                <div class="stat-label">Articles</div>
+            </div>
+            <div>
+                <div class="stat-number" id="stat-published">—</div>
+                <div class="stat-label">Publiés</div>
+            </div>
+            <div>
+                <div class="stat-number" id="stat-draft">—</div>
+                <div class="stat-label">Brouillons</div>
+            </div>
+        </div>
+
+        <div id="articles-list">
+            <div class="loading">Chargement…</div>
+        </div>
+    </div>
+
+    <script>
+        // ── Auth check ──
+        async function checkAuth() {
+            const res = await fetch('/api/admin/me');
+            if (!res.ok) {
+                window.location.href = '/admin/login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ── Load articles ──
+        async function loadArticles() {
+            const res = await fetch('/api/admin/articles');
+            if (!res.ok) {
+                window.location.href = '/admin/login.html';
+                return;
+            }
+
+            const articles = await res.json();
+            const list = document.getElementById('articles-list');
+
+            // Stats
+            const published = articles.filter(a => a.status === 'published').length;
+            document.getElementById('stat-total').textContent = articles.length;
+            document.getElementById('stat-published').textContent = published;
+            document.getElementById('stat-draft').textContent = articles.length - published;
+
+            if (articles.length === 0) {
+                list.innerHTML = '<div class="empty">Aucun article pour le moment</div>';
+                return;
+            }
+
+            list.innerHTML = articles.map(a => `
+                <div class="article-item">
+                    ${a.cover_image ? `<img class="article-cover" src="/${a.cover_image}" alt="">` : '<div class="article-cover"></div>'}
+                    <div class="article-info">
+                        <div class="article-title">${a.title}</div>
+                        <div class="article-meta">
+                            <span class="status-badge status-${a.status}">${a.status}</span>
+                            · ${new Date(a.created_at).toLocaleDateString('fr-FR')}
+                        </div>
+                    </div>
+                    <div class="article-actions">
+                        <a href="/admin/edit.html?id=${a.id}" class="btn-small">Modifier</a>
+                        <button class="btn-small delete" onclick="deleteArticle(${a.id}, '${a.title.replace(/'/g, "\\'")}')">Supprimer</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ── Delete ──
+        async function deleteArticle(id, title) {
+            if (!confirm(`Supprimer "${title}" ?`)) return;
+
+            const res = await fetch(`/api/admin/article/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                loadArticles();
+            } else {
+                alert('Erreur lors de la suppression');
+            }
+        }
+
+        // ── Logout ──
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            await fetch('/api/admin/me', { method: 'DELETE' });
+            window.location.href = '/admin/login.html';
+        });
+
+        // ── Init ──
+        checkAuth().then(ok => { if (ok) loadArticles(); });
+    </script>
+</body>
+</html>

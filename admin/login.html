@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — LA PAMPA</title>
+    <style>
+        @font-face {
+            font-family: 'Neue Haas Grotesk';
+            src: url('../fonts/NeueHaasDisplayRoman.woff2') format('woff2');
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: 'Neue Haas Grotesk';
+            src: url('../fonts/NeueHaasDisplayMediu.woff2') format('woff2');
+            font-weight: 500;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Neue Haas Grotesk', -apple-system, sans-serif;
+            background: #F5F5F5;
+            color: #0A0A0A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 360px;
+            padding: 0 20px;
+        }
+
+        .login-box h1 {
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            color: #0A0A0A;
+        }
+
+        .login-box h1 span {
+            color: #FF3D71;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 12px 0;
+            font-family: inherit;
+            font-size: 15px;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            background: transparent;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .field input:focus {
+            border-bottom-color: #0A0A0A;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            margin-top: 24px;
+            padding: 14px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: none;
+            background: #0A0A0A;
+            color: #F5F5F5;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button[type="submit"]:hover {
+            background: #FF3D71;
+        }
+
+        .error {
+            margin-top: 16px;
+            font-size: 13px;
+            color: #FF3D71;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>La Pampa <span>· Admin</span></h1>
+
+        <form id="login-form">
+            <div class="field">
+                <label>Email</label>
+                <input type="email" id="email" required autocomplete="email">
+            </div>
+            <div class="field">
+                <label>Mot de passe</label>
+                <input type="password" id="password" required autocomplete="current-password">
+            </div>
+            <button type="submit">Se connecter</button>
+        </form>
+
+        <p class="error" id="error"></p>
+    </div>
+
+    <script>
+        // Si déjà connecté, rediriger vers le dashboard
+        fetch('/api/admin/me').then(r => {
+            if (r.ok) window.location.href = '/admin/';
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const errorEl = document.getElementById('error');
+            errorEl.style.display = 'none';
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    window.location.href = '/admin/';
+                } else {
+                    errorEl.textContent = data.error || 'Erreur de connexion';
+                    errorEl.style.display = 'block';
+                }
+            } catch {
+                errorEl.textContent = 'Erreur réseau';
+                errorEl.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
