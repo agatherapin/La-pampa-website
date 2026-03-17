@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>LA PAMPA</title>
+    <style>
+        /* ── Variables héritées de style.css ── */
+        body {
+            cursor: default;
+            overflow: hidden;
+        }
+
+        /* ── Split screen ── */
+        .split-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .world {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: flex 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+            background: var(--bg-secondary);
+        }
+
+        /* Image de fond subtile (placeholder sombre/clair) */
+        .world-exploration {
+            background: var(--bg-secondary);
+        }
+
+        .world-randomizer {
+            background: var(--bg-secondary);
+        }
+
+        /* Trait vertical séparateur */
+        .world-exploration::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: 1px;
+            background: var(--border-solid);
+        }
+
+        .world:hover {
+            flex: 1.08;
+        }
+
+        /* Overlay sombre au hover pour mettre en valeur le texte */
+        .world-overlay {
+            position: absolute;
+            inset: 0;
+            background: var(--bg-secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 38vh;
+            opacity: 0.85;
+            transition: opacity 0.4s ease, background var(--transition);
+            text-align: center;
+        }
+        
+        .world:hover .world-overlay {
+            background: var(--bg);        
+        }
+
+        [data-theme="dark"] .world-overlay {
+    background: var(--bg);
+}
+
+[data-theme="dark"] .world:hover .world-overlay {
+    background: var(--bg-secondary);
+}
+
+        .world-title {
+            font-size: 44px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 10px;
+            letter-spacing: -2px;
+            line-height: 1;
+            transition: color var(--transition);
+        }
+
+        .world-description {
+            font-size: 15px;
+            color: var(--text-muted);
+            max-width: 400px;   
+            line-height: 1.6;
+            margin-top: 15px;
+            transition: color var(--transition);
+        }
+
+        /* Trait d'accent qui apparaît sous le titre au hover */
+        .world-title-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        .world-title-wrap::after {
+            content: '';
+            display: block;
+            height: 2px;
+            background: var(--accent);
+            width: 0;
+            transition: width 0.4s ease;
+            margin-top: 2px;
+        }
+
+        .world:hover .world-title-wrap::after {
+            width: 100%;
+        }
+
+        /* ── Navigation ── */
+        nav {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 36px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            transition: background var(--transition), border var(--transition);
+        }
+
+        .nav-brand {
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: var(--text);
+            transition: color var(--transition);
+        }
+        
+        .nav-brand img {
+            height: 24px;
+            width: auto;
+            margin-top: 7px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 13px;
+            letter-spacing: 0.02em;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .split-container {
+                flex-direction: column;
+            }
+
+            .world-exploration::after {
+                display: none;
+            }
+
+            .world-title {
+                font-size: 32px;
+            }
+
+            .world-description {
+                font-size: 14px;
+            }
+
+            nav {
+                padding: 14px 20px;
+            }
+
+            .nav-links {
+                gap: 16px;
+            }
+        }
+    </style>
+    <!-- Applique le thème avant le rendu pour éviter le flash -->
+    <script>
+        (function() {
+            const stored = localStorage.getItem("lapampa-theme");
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            const theme = stored || (prefersDark ? "dark" : "light");
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+</head>
+<body>
+
+    <div class="split-container">
+        <!-- World Exploration -->
+        <a href="world-exploration.html" class="world world-exploration">
+            <div class="world-overlay">
+                <div class="world-title-wrap">
+                    <h1 class="world-title">World Exploration</h1>
+                </div>
+                <p class="world-description">
+                    Naviguez dans une sphère 3D et découvrez des articles sélectionnés avec soin.
+                    Explorez librement et laissez vous guider par votre curiosité.
+                </p>
+            </div>
+        </a>
+
+        <!-- Randomizer -->
+        <a href="randomizer.html" class="world world-randomizer">
+            <div class="world-overlay">
+                <div class="world-title-wrap">
+                    <h1 class="world-title">Randomizer</h1>
+                </div>
+                <p class="world-description">
+                    Laissez le hasard décider de votre prochaine découverte. <br> Pas d'algorithme, juste des trouvailles inattendues.
+                </p>
+            </div>
+        </a>
+    </div>
+
+    <script src="ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Randomizer — LA PAMPA</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            /* Reset cursor spécifique pour cette page */
+        }
+
+        /* ── Card ── */
+        #card-container {
+            width: 360px;
+            height: 360px;
+            border: 1px solid var(--border-solid);
+            position: relative;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.25s ease, border-color 0.3s ease, box-shadow var(--transition);
+            background: var(--surface);
+        }
+
+        #card-container:hover {
+            transform: scale(1.015);
+        }
+
+        /* Trait accent sur le bas de la card quand stoppé */
+        #card-container.stopped {
+            cursor: pointer;
+            border-color: var(--accent);
+        }
+
+        #card-display {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        /* Overlay titre */
+        #card-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 100%);
+            color: #F5F5F5;
+            padding: 32px 20px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: -0.2px;
+            line-height: 1.3;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+            font-family: "neue-haas-grotesk-display", sans-serif;
+        }
+
+        #card-container.stopped #card-title {
+            opacity: 1;
+        }
+
+        /* Indicateur d'état — petit point clignotant pendant le spin */
+        #spin-indicator {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        #spin-indicator.active {
+            opacity: 1;
+            animation: pulse 0.6s ease infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.4; transform: scale(0.8); }
+            to   { opacity: 1;   transform: scale(1.2); }
+        }
+
+        /* ── Instructions ── */
+        #instructions {
+            /* hérite de style.css */
+        }
+
+        #instructions.spinning {
+            color: var(--text-faint);
+        }
+    </style>
+    <!-- Anti-flash thème -->
+    <script>
+        (function() {
+            const stored = localStorage.getItem("lapampa-theme");
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            const theme = stored || (prefersDark ? "dark" : "light");
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+</head>
+<body>
+    <a href="index.html" id="back-button">← Back</a>
+
+    <div id="card-container">
+        <div id="card-display">
+            <div id="card-title"></div>
+            <div id="spin-indicator"></div>
+        </div>
+    </div>
+
+    <div id="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">×</button>
+            <div class="modal-inner">
+                <div class="modal-image-col">
+                    <div id="modal-gallery"></div>
+                </div>
+                <div class="modal-text-col">
+                    <div id="modal-body"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="instructions">Cliquer pour lancer le randomizer</div>
+
+    <!-- Theme toggle -->
+    <button id="theme-toggle" title="Changer de thème">☾</button>
+
+    <script src="https://player.vimeo.com/api/player.js"></script>
+    <script src="modal.js"></script>
+    <script>
+        // ── THEME ───────────────────────────────────────────
+        const STORAGE_KEY = "lapampa-theme";
+
+        function getTheme() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) return stored;
+            return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute("data-theme", theme);
+            const btn = document.getElementById("theme-toggle");
+            if (btn) btn.textContent = theme === "dark" ? "☀" : "☾";
+            localStorage.setItem(STORAGE_KEY, theme);
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute("data-theme");
+            applyTheme(current === "dark" ? "light" : "dark");
+        }
+
+        applyTheme(getTheme());
+        document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
+
+        // ── CHARGEMENT DES ARTICLES DEPUIS L'API ────────────
+        let articles = [];
+
+        async function loadArticles() {
+            try {
+                const response = await fetch('/api/articles');
+                articles = await response.json();
+            } catch (error) {
+                console.error('Erreur chargement articles:', error);
+                return;
+            }
+            initRandomizer();
+        }
+
+        loadArticles();
+
+        // ── RANDOMIZER ──────────────────────────────────────
+        function initRandomizer() {
+        const cardDisplay   = document.getElementById('card-display');
+        const cardTitle     = document.getElementById('card-title');
+        const cardContainer = document.getElementById('card-container');
+        const spinIndicator = document.getElementById('spin-indicator');
+        const modal         = document.getElementById('modal');
+        const closeModalBtn = document.getElementById('closeModal');
+        const instructions  = document.getElementById('instructions');
+
+        let isSpinning = false;
+        let isStopped  = false;
+        let spinInterval = null;
+        let selectedArticle = null;
+        let lastSelectedArticle = null;
+
+        function getRandomArticle() {
+            let article, attempts = 0;
+            do {
+                article = articles[Math.floor(Math.random() * articles.length)];
+                attempts++;
+            } while (lastSelectedArticle && article.title === lastSelectedArticle.title && attempts < 10);
+            return article;
+        }
+
+        function updateImage() {
+            const article = getRandomArticle();
+            cardDisplay.style.backgroundImage = `url(${article.image})`;
+            selectedArticle = article;
+        }
+
+        function startSpinning() {
+            isSpinning = true;
+            cardTitle.textContent = '';
+            cardContainer.classList.remove('stopped');
+            isStopped = false;
+            instructions.textContent = 'Cliquer pour stopper';
+            instructions.classList.add('spinning');
+            spinIndicator.classList.add('active');
+            spinInterval = setInterval(updateImage, 100);
+        }
+
+        function stopSpinning() {
+            isSpinning = false;
+            clearInterval(spinInterval);
+            spinIndicator.classList.remove('active');
+
+            const delays = [150, 250, 400, 600];
+            let step = 0;
+
+            function nextStep() {
+                if (step >= 4) {
+                    lastSelectedArticle = selectedArticle;
+                    isStopped = true;
+                    cardContainer.classList.add('stopped');
+                    cardTitle.textContent = selectedArticle.title;
+                    instructions.textContent = 'Cliquer sur la card pour lire · Cliquer ailleurs pour recommencer';
+                    instructions.classList.remove('spinning');
+                    return;
+                }
+                updateImage();
+                setTimeout(nextStep, delays[step]);
+                step++;
+            }
+
+            nextStep();
+        }
+
+        // ── CLICS ───────────────────────────────────────────
+        document.body.addEventListener('click', (e) => {
+            if (e.target.closest('#modal') || e.target.closest('#back-button') || e.target.closest('#theme-toggle')) return;
+
+            if (e.target.closest('#card-container') && isStopped) {
+                openModal(selectedArticle);
+                instructions.textContent = 'Fermer pour recommencer';
+                return;
+            }
+
+            if (!isSpinning && !modal.classList.contains('active')) {
+                startSpinning();
+            } else if (isSpinning) {
+                stopSpinning();
+            }
+        });
+
+        // ── MODAL ────────────────────────────────────────────
+        function closeModal() {
+            clearModal();
+            isStopped = false;
+            cardContainer.classList.remove('stopped');
+            cardTitle.textContent = '';
+            instructions.textContent = 'Cliquer pour lancer le randomizer';
+            updateImage();
+        }
+
+        closeModalBtn.addEventListener('click', (e) => { e.stopPropagation(); closeModal(); });
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+        // ── INIT ─────────────────────────────────────────────
+        updateImage();
+
+        } // ← fin de initRandomizer()
+    </script>
+</body>
+</html>
