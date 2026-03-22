@@ -8,3 +8,5 @@ convert-to-webp.py
 # macOS
 .DS_Store
 **/.DS_Store
+.vercel
+.env*.local

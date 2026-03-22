@@ -16,12 +16,11 @@ document.body.insertAdjacentHTML('beforeend', `
 
     <nav>
         <div class="nav-brand">
-            <a href="main-page.html"><img id="nav-logo" src="img/Logo La Pampa PNG.webp" alt="LA PAMPA"></a>
+            <a href="index.html"><img id="nav-logo" src="img/Logo La Pampa PNG.webp" alt="LA PAMPA"></a>
         </div>
         <div class="nav-links">
             <a href="magazine.html">Magazine</a>
-            <a href="index.html">Explorer</a>
-            <a href="#" class="nav-link" data-panel="apropos">À propos</a>
+            <a href="explorer.html">Explorer</a>
             <a href="#" class="nav-link" data-panel="contact">Contact</a>
         </div>
     </nav>
@@ -29,11 +28,6 @@ document.body.insertAdjacentHTML('beforeend', `
 
 // ── DRAWER ──────────────────────────────────────────────────
 const panels = {
-    apropos: `
-        <h2>L'histoire derrière la Pampa</h2>
-        <p>Ce projet est né d'une envie personnelle d'apporter un nouveau regard sur la scène artistique française.</p>
-        <p style="margin-top: 16px;">La Pampa est une plateforme de découverte collaborative, sans algorithme, construite autour du hasard et de l'exploration.</p>
-    `,
     contact: `
         <h2>Contact</h2>
         <p>contact@lapampa.com</p>
@@ -79,7 +73,7 @@ function applyTheme(theme) {
     const btn = document.getElementById("theme-toggle");
     if (btn) btn.textContent = theme === "dark" ? "☀" : "☾";
     const logo = document.getElementById("nav-logo");
-    if (logo) logo.src = theme === "dark" ? "img/Logo La Pampa PNG blanc.webp" : "img/Logo La Pampa PNG.webp";
+    if (logo) logo.src = theme === "dark" ? "img/logo-la-pampa-blanc.webp" : "img/logo-la-pampa-noir.webp";
     localStorage.setItem(STORAGE_KEY, theme);
 }
 
