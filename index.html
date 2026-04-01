@@ -139,7 +139,6 @@
         }
 
         .sg-text p {
-            transition: opacity 0.35s ease;
             font-family: 'Instrument Serif', serif;
             font-size: clamp(16px, 1.6vw, 24px);
             line-height: 1.45;
@@ -254,6 +253,76 @@
             transform: translateY(0);
         }
 
+        #text-block {
+            padding: 12vh 0 18vh;
+            overflow: hidden;
+            background: var(--bg);
+        }
+
+        .tb-headline {
+            font-family: var(--font-display);
+            font-size: clamp(72px, 13vw, 200px);
+            font-weight: 700;
+            line-height: 0.93;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            text-align: center;
+            margin-bottom: 6vh;
+        }
+
+        .tb-line {
+            display: block;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* décalages asymétriques autour du centre */
+        .tb-line:nth-child(1) { left: -3vw; }
+        .tb-line:nth-child(2) { left:  5vw; }
+        .tb-line:nth-child(3) { left: -1vw; }
+
+        .tb-line-inner {
+            display: block;
+            opacity: 0;
+            transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1),
+                        opacity 0.6s ease,
+                        color 0.25s ease;
+        }
+
+        .tb-line:nth-child(odd)  .tb-line-inner { transform: translateX(-60px); }
+        .tb-line:nth-child(even) .tb-line-inner { transform: translateX(60px); }
+
+        #text-block.is-visible .tb-line-inner {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        #text-block.is-visible .tb-line:nth-child(2) .tb-line-inner { transition-delay: 0.1s; }
+        #text-block.is-visible .tb-line:nth-child(3) .tb-line-inner { transition-delay: 0.2s; }
+
+        .tb-line:hover .tb-line-inner {
+            color: var(--accent);
+        }
+
+        .tb-sub {
+            text-align: center;
+            padding: 0 6vw;
+            font-size: clamp(12px, 1vw, 15px);
+            line-height: 1.7;
+            color: var(--text-muted);
+            max-width: 420px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.8s ease 0.35s, transform 0.8s ease 0.35s;
+        }
+
+        #text-block.is-visible .tb-sub {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+
         /* ── CTA Tools ── */
         #cta-tools {
             background: var(--bg);
@@ -334,6 +403,13 @@
     </header>
 
     <main>
+    <section id="manifesto">
+        <div class="manifesto-inner">
+            <p class="manifesto-text">Là où les regards ne vont pas encore, LA PAMPA explore.<br>Design, typographie, musique, art – les scènes qui façonnent<br>demain, racontées pour ceux qui veulent voir avant les autres.</p>
+            <p class="manifesto-sub">La Pampa documente les scènes qui existent en dehors des algorithmes — les salles trop petites pour les radars, les labels trop indépendants pour les playlists, les artistes qui construisent leur public un concert à la fois. Pas de tendances. Pas de classements. Juste le son.</p>
+        </div>
+    </section>
+
     <section id="scroll-gallery">
         <div class="sg-sticky">
             <div class="sg-slide" data-index="0">
@@ -351,11 +427,13 @@
         </div>
     </section>
 
-    <section id="manifesto">
-        <div class="manifesto-inner">
-            <p class="manifesto-text">Là où les regards ne vont pas encore, LA PAMPA explore.<br>Design, typographie, musique, art – les scènes qui façonnent<br>demain, racontées pour ceux qui veulent voir avant les autres.</p>
-            <p class="manifesto-sub">La Pampa documente les scènes qui existent en dehors des algorithmes — les salles trop petites pour les radars, les labels trop indépendants pour les playlists, les artistes qui construisent leur public un concert à la fois. Pas de tendances. Pas de classements. Juste le son.</p>
+    <section id="text-block">
+        <div class="tb-headline">
+            <span class="tb-line"><span class="tb-line-inner">La création</span></span>
+            <span class="tb-line"><span class="tb-line-inner">ne vit pas</span></span>
+            <span class="tb-line"><span class="tb-line-inner">qu'à Paris.</span></span>
         </div>
+        <p class="tb-sub">La Pampa donne la parole aux talents créatifs qui travaillent en province — designers, typographes, musiciens, artistes. Parce que les scènes qui comptent ne sont pas toutes dans la capitale.</p>
     </section>
 
     <section id="cta-tools">
@@ -725,9 +803,9 @@
             const imgEls = slides.map(s => s.querySelector('img'));
 
             const TEXTS = [
-                "Plongez dans les scènes musicales qui échappent aux radars — de Paris à Buenos Aires.",
-                "Rencontres avec les artistes qui redéfinissent les contours de la création indépendante.",
-                "Des festivals confidentiels aux labels souterrains, La Pampa documente l'invisible."
+                "Un magazine qui met à l'honneur les talents créatifs qui travaillent loin des capitales.",
+                "Une sphère 3D à explorer librement — naviguez, zoomez, cliquez. La curiosité fait le reste.",
+                "Au petit bonheur la chance — laissez le contenu venir à vous, sans chercher."
             ];
 
             function lerp(a, b, t) { return a + (b - a) * t; }
@@ -843,17 +921,12 @@
     <script src="ui.js"></script>
     <script>
         // ── Manifesto reveal ──
-        const manifesto = document.getElementById('manifesto');
-        if (manifesto) {
-            const observer = new IntersectionObserver(([entry]) => {
-                if (entry.isIntersecting) {
-                    manifesto.classList.add('is-visible');
-                } else {
-                    manifesto.classList.remove('is-visible');
-                }
-            }, { threshold: 0.15 });
-            observer.observe(manifesto);
-        }
+        [document.getElementById('manifesto'), document.getElementById('text-block')].forEach(el => {
+            if (!el) return;
+            new IntersectionObserver(([entry]) => {
+                el.classList.toggle('is-visible', entry.isIntersecting);
+            }, { threshold: 0.15 }).observe(el);
+        });
     </script>
 </body>
 

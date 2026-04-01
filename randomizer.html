@@ -21,11 +21,13 @@
             width: 360px;
             height: 360px;
             border: 1px solid var(--border-solid);
+            border-radius: 12px;
             position: relative;
             box-shadow: var(--shadow-lg);
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
             transition: transform 0.25s ease, border-color 0.3s ease, box-shadow var(--transition);
             background: var(--surface);
         }
@@ -63,7 +65,7 @@
             line-height: 1.3;
             opacity: 0;
             transition: opacity 0.35s ease;
-            font-family: "neue-haas-grotesk-display", sans-serif;
+            font-family: var(--font-display);
         }
 
         #card-container.stopped #card-title {
@@ -113,7 +115,7 @@
     </script>
 </head>
 <body>
-    <a href="index.html" id="back-button">← Back</a>
+    <a href="explorer.html" id="back-button">← Back</a>
 
     <div id="card-container">
         <div id="card-display">

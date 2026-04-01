@@ -1,9 +1,15 @@
 {
   "name": "la-pampa",
   "version": "1.0.0",
+  "scripts": {
+    "watch": "browser-sync start --proxy http://localhost:3000 --files '**/*.html,**/*.css,**/*.js' --port 4000 --no-open"
+  },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.0",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "browser-sync": "^3.0.0"
   }
 }
