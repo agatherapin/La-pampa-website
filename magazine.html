@@ -44,6 +44,347 @@
             flex: 1;
         }
 
+        /* ── Intro magazine ── */
+        #mag-intro {
+            padding: 8vh 6vw 6vh;
+            background: var(--bg);
+        }
+
+        .mag-intro-eyebrow {
+            display: block;
+            font-family: var(--font-display);
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .mag-intro-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(28px, 4vw, 58px);
+            font-weight: 400;
+            line-height: 1.12;
+            letter-spacing: -0.01em;
+            color: var(--text);
+            margin-bottom: 24px;
+            max-width: 760px;
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+        }
+
+        .mag-intro-sub {
+            font-size: clamp(12px, 1vw, 15px);
+            line-height: 1.7;
+            color: var(--text-muted);
+            max-width: 480px;
+            text-align: justify;
+            text-justify: inter-word;
+            hyphens: auto;
+            -webkit-hyphens: auto;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease 0.15s, transform 0.8s ease 0.15s;
+        }
+
+        #mag-intro.is-visible .mag-intro-title,
+        #mag-intro.is-visible .mag-intro-sub {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Footer ── */
+        .site-footer {
+            background: var(--bg);
+            border-top: 1px solid var(--border-solid);
+            padding: 56px 6vw 120px;
+        }
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+        }
+        .footer-brand-name {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: clamp(28px, 4vw, 52px);
+            letter-spacing: -0.02em;
+            color: var(--text);
+            line-height: 1;
+            display: block;
+        }
+        .footer-baseline {
+            font-family: var(--font-body);
+            font-weight: 400;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            letter-spacing: 0.01em;
+            display: block;
+        }
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+        .footer-links a {
+            font-family: var(--font-body);
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            transition: color 0.2s ease;
+        }
+        .footer-links a:hover { color: var(--text); }
+        .footer-instagram {
+            display: flex;
+            align-items: center;
+        }
+        .footer-instagram svg {
+            width: 18px; height: 18px;
+            fill: none; stroke: var(--text-muted);
+            stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+            transition: stroke 0.2s ease;
+        }
+        .footer-instagram:hover svg { stroke: var(--text); }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 24px;
+        }
+        .footer-legal {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .footer-legal span,
+        .footer-legal a {
+            font-family: var(--font-body);
+            font-size: 11px;
+            color: var(--text-faint);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            transition: color 0.2s ease;
+        }
+        .footer-legal a:hover { color: var(--text-muted); }
+        .footer-back-top {
+            font-family: var(--font-body);
+            font-size: 11px;
+            color: var(--text-faint);
+            text-decoration: none;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s ease;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .footer-back-top:hover { color: var(--text-muted); }
+        .footer-back-top svg {
+            width: 12px; height: 12px;
+            fill: none; stroke: currentColor;
+            stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+        }
+
+        /* ══════════════════════════════════════
+           MAGAZINE VIEWER
+        ══════════════════════════════════════ */
+        #mag-viewer {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: stretch;
+            background: #0A0A0A;
+            overflow: hidden;
+        }
+
+        #mag-stage {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: default;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        #mag-zoom-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            will-change: transform;
+            width: 100%;
+            height: 100%;
+        }
+
+        #mag-img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            -webkit-user-drag: none;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Flèches */
+        .mag-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 50;
+            color: var(--text);
+            transition: background var(--transition), border-color var(--transition), opacity var(--transition);
+            opacity: 0.5;
+        }
+        .mag-arrow:hover { opacity: 1; border-color: var(--border-solid); }
+        .mag-arrow:disabled { opacity: 0.15; cursor: default; pointer-events: none; }
+        .mag-arrow svg { stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+        #mag-prev { left: 20px; }
+        #mag-next { right: 20px; }
+
+        /* Compteur */
+        #mag-counter {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-display);
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--glass-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 6px 18px;
+            z-index: 50;
+            white-space: nowrap;
+        }
+
+        /* Boutons zoom */
+        #mag-zoom-controls {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 50;
+        }
+        .mag-zoom-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(245,245,245,0.10);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(245,245,245,0.14);
+            color: #F5F5F5;
+            font-size: 18px;
+            font-family: system-ui, sans-serif;
+            font-weight: 300;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+        .mag-zoom-btn:hover { background: rgba(245,245,245,0.18); border-color: rgba(245,245,245,0.28); }
+        .mag-zoom-btn:disabled { opacity: 0.2; cursor: default; pointer-events: none; }
+
+        /* Hint zoom */
+        #mag-zoom-hint {
+            position: absolute;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-display);
+            font-size: 10px;
+            letter-spacing: 0.06em;
+            color: rgba(245,245,245,0.3);
+            z-index: 50;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Bouton fullscreen */
+        #mag-fullscreen-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(245,245,245,0.10);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(245,245,245,0.14);
+            color: #F5F5F5;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+        #mag-fullscreen-btn:hover { background: rgba(245,245,245,0.20); border-color: rgba(245,245,245,0.30); }
+        #mag-fullscreen-btn svg { fill: none; stroke: #F5F5F5; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+        /* Fullscreen natif — fond noir, image centrée */
+        #mag-viewer:fullscreen,
+        #mag-viewer:-webkit-full-screen {
+            background: #0A0A0A;
+        }
+        #mag-viewer:fullscreen #mag-stage,
+        #mag-viewer:-webkit-full-screen #mag-stage {
+            height: 100vh;
+        }
+
+        /* État zoomé */
+        #mag-stage.zoomed { cursor: grab; }
+        #mag-stage.zoomed.dragging { cursor: grabbing; }
+
+        /* Placeholder si aucune page */
+        #mag-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            color: var(--text-faint);
+            font-family: var(--font-display);
+            font-size: 13px;
+            letter-spacing: 0.06em;
+            height: 100%;
+        }
+
         /* ── Navigation ── */
         nav {
             position: fixed;
@@ -60,7 +401,7 @@
             border: 1px solid var(--glass-border);
             border-radius: 50px;
             box-shadow: var(--shadow-lg);
-            z-index: 100;
+            z-index: 200;
             transition: background var(--transition), border var(--transition);
         }
 
@@ -95,7 +436,59 @@
         <canvas id="c"></canvas>
     </header>
 
-    <main></main>
+    <main>
+
+        <!-- ── Intro ── -->
+        <section id="mag-intro">
+            <span class="mag-intro-eyebrow">Numéro 1</span>
+            <p class="mag-intro-title">Le premier numéro<br>de La Pampa.</p>
+            <p class="mag-intro-sub">Un magazine qui documente les scènes créatives qui existent en dehors des radars. Design, typographie, musique, photographie — raconté par ceux qui y sont.</p>
+        </section>
+
+        <!-- ── Viewer ── -->
+        <section id="mag-viewer">
+
+            <!-- Flèche gauche -->
+            <button id="mag-prev" class="mag-arrow" aria-label="Page précédente">
+                <svg width="18" height="18" viewBox="0 0 18 18"><polyline points="11,4 6,9 11,14"/></svg>
+            </button>
+
+            <!-- Zone d'affichage -->
+            <div id="mag-stage">
+                <div id="mag-zoom-wrap">
+                    <img id="mag-img" alt="Page du magazine" draggable="false" />
+                </div>
+            </div>
+
+            <!-- Flèche droite -->
+            <button id="mag-next" class="mag-arrow" aria-label="Page suivante">
+                <svg width="18" height="18" viewBox="0 0 18 18"><polyline points="7,4 12,9 7,14"/></svg>
+            </button>
+
+            <!-- Compteur -->
+            <div id="mag-counter">— / —</div>
+
+            <!-- Zoom controls -->
+            <div id="mag-zoom-controls">
+                <button class="mag-zoom-btn" id="mag-zoom-out" aria-label="Dézoomer">−</button>
+                <button class="mag-zoom-btn" id="mag-zoom-in"  aria-label="Zoomer">+</button>
+            </div>
+
+            <!-- Fullscreen -->
+            <button id="mag-fullscreen-btn" aria-label="Plein écran">
+                <svg id="mag-fs-icon" width="16" height="16" viewBox="0 0 16 16">
+                    <polyline points="1,5 1,1 5,1"/>
+                    <polyline points="11,1 15,1 15,5"/>
+                    <polyline points="15,11 15,15 11,15"/>
+                    <polyline points="5,15 1,15 1,11"/>
+                </svg>
+            </button>
+
+            <!-- Hint -->
+            <p id="mag-zoom-hint">Double-clic pour agrandir · Échap pour réinitialiser</p>
+
+        </section>
+    </main>
 
 
 
@@ -397,7 +790,271 @@
         loop();
     </script>
 
+    <footer class="site-footer">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <span class="footer-brand-name">La Pampa</span>
+                <span class="footer-baseline">le média des scènes hors-radar</span>
+            </div>
+            <div class="footer-links">
+                <a href="mailto:contact@lapampa.fr" class="footer-link">Contact</a>
+                <a href="https://www.instagram.com/lapampa_media/" class="footer-instagram" aria-label="Instagram" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                        <circle cx="12" cy="12" r="4.5"/>
+                        <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-legal">
+                <span>© 2025 La Pampa</span>
+                <a href="#">Conditions générales d'utilisation</a>
+                <a href="#">Mentions légales</a>
+            </div>
+            <button class="footer-back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+                <svg viewBox="0 0 12 12"><polyline points="1,9 6,3 11,9"/></svg>
+                Haut de page
+            </button>
+        </div>
+    </footer>
+
     <script src="ui.js"></script>
+
+    <script>
+    // ══════════════════════════════════════
+    // MAGAZINE VIEWER
+    // ══════════════════════════════════════
+    (function () {
+
+        // ── Pages du magazine ────────────────────────────────────
+        const PAGES = [
+            'img/magazine/website_version.webp',
+            'img/magazine/website_version2.webp',
+            'img/magazine/website_version3.webp',
+            'img/magazine/website_version4.webp',
+            'img/magazine/website_version5.webp',
+            'img/magazine/website_version6.webp',
+            'img/magazine/website_version7.webp',
+            'img/magazine/website_version8.webp',
+            'img/magazine/website_version9.webp',
+            'img/magazine/website_version10.webp',
+            'img/magazine/website_version11.webp',
+            'img/magazine/website_version12.webp',
+            'img/magazine/website_version13.webp',
+            'img/magazine/website_version14.webp',
+            'img/magazine/website_version15.webp',
+            'img/magazine/website_version16.webp',
+            'img/magazine/website_version17.webp',
+            'img/magazine/website_version18.webp',
+            'img/magazine/website_version19.webp',
+            'img/magazine/website_version20.webp',
+            'img/magazine/website_version21.webp',
+        ];
+        // ────────────────────────────────────────────────────────
+
+        const stage   = document.getElementById('mag-stage');
+        const wrap    = document.getElementById('mag-zoom-wrap');
+        const img     = document.getElementById('mag-img');
+        const counter = document.getElementById('mag-counter');
+        const prevBtn = document.getElementById('mag-prev');
+        const nextBtn = document.getElementById('mag-next');
+        const hint    = document.getElementById('mag-zoom-hint');
+
+        if (!PAGES.length) {
+            stage.innerHTML = '<div id="mag-empty"><span>Aucune page à afficher</span><span style="font-size:11px;color:var(--text-faint)">Ajoutez vos images dans le tableau PAGES du script</span></div>';
+            prevBtn.style.display = nextBtn.style.display = counter.style.display = hint.style.display = 'none';
+            return;
+        }
+
+        let current = 0;
+        let zoom = 1, panX = 0, panY = 0;
+        let isDragging = false, dragStartX = 0, dragStartY = 0, panStartX = 0, panStartY = 0;
+        const MIN_ZOOM = 1, MAX_ZOOM = 5;
+
+        // ── Transform ───────────────────────────────────────────
+        function applyTransform() {
+            wrap.style.transform = `scale(${zoom}) translate(${panX / zoom}px, ${panY / zoom}px)`;
+            stage.classList.toggle('zoomed', zoom > 1);
+        }
+
+        function clampPan() {
+            if (zoom <= 1) { panX = 0; panY = 0; return; }
+            const maxX = (stage.clientWidth  * (zoom - 1)) / 2;
+            const maxY = (stage.clientHeight * (zoom - 1)) / 2;
+            panX = Math.max(-maxX, Math.min(maxX, panX));
+            panY = Math.max(-maxY, Math.min(maxY, panY));
+        }
+
+        function resetZoom() { zoom = 1; panX = 0; panY = 0; applyTransform(); }
+
+        // ── Navigation ──────────────────────────────────────────
+        function goTo(index) {
+            if (index < 0 || index >= PAGES.length) return;
+            current = index;
+            resetZoom();
+            img.style.opacity = '0';
+            const src = PAGES[current];
+            const tmp = new Image();
+            tmp.onload = () => { img.src = src; img.style.opacity = '1'; };
+            tmp.onerror = () => { img.style.opacity = '0.3'; };
+            tmp.src = src;
+            counter.textContent = (current + 1) + ' / ' + PAGES.length;
+            prevBtn.disabled = current === 0;
+            nextBtn.disabled = current === PAGES.length - 1;
+        }
+
+        prevBtn.addEventListener('click', () => goTo(current - 1));
+        nextBtn.addEventListener('click', () => goTo(current + 1));
+
+        // ── Zoom Ctrl+molette (ne bloque pas le scroll normal) ───
+        stage.addEventListener('wheel', e => {
+            if (!e.ctrlKey && !e.metaKey) return; // laisse passer le scroll de page
+            e.preventDefault();
+            const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+            const rect   = stage.getBoundingClientRect();
+            const mx     = e.clientX - rect.left - rect.width  / 2;
+            const my     = e.clientY - rect.top  - rect.height / 2;
+            const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom * factor));
+            panX = mx - (mx - panX) * (newZoom / zoom);
+            panY = my - (my - panY) * (newZoom / zoom);
+            zoom = newZoom;
+            if (zoom <= 1) { zoom = 1; panX = 0; panY = 0; }
+            clampPan();
+            applyTransform();
+        }, { passive: false });
+
+        // ── Boutons +/− ──────────────────────────────────────────
+        document.getElementById('mag-zoom-in').addEventListener('click', () => {
+            zoom = Math.min(MAX_ZOOM, zoom * 1.3);
+            clampPan(); applyTransform();
+        });
+        document.getElementById('mag-zoom-out').addEventListener('click', () => {
+            zoom = Math.max(MIN_ZOOM, zoom / 1.3);
+            if (zoom <= 1) { zoom = 1; panX = 0; panY = 0; }
+            clampPan(); applyTransform();
+        });
+
+        // ── Double-clic toggle zoom ───────────────────────────────
+        stage.addEventListener('dblclick', e => {
+            if (zoom > 1) { resetZoom(); return; }
+            const rect = stage.getBoundingClientRect();
+            const mx   = e.clientX - rect.left - rect.width  / 2;
+            const my   = e.clientY - rect.top  - rect.height / 2;
+            zoom = 2.5;
+            panX = -mx * (zoom - 1);
+            panY = -my * (zoom - 1);
+            clampPan();
+            applyTransform();
+        });
+
+        // ── Drag to pan ──────────────────────────────────────────
+        stage.addEventListener('mousedown', e => {
+            if (zoom <= 1 || e.button !== 0) return;
+            isDragging = true;
+            dragStartX = e.clientX; dragStartY = e.clientY;
+            panStartX  = panX;      panStartY  = panY;
+            stage.classList.add('dragging');
+            e.preventDefault();
+        });
+        window.addEventListener('mousemove', e => {
+            if (!isDragging) return;
+            panX = panStartX + (e.clientX - dragStartX);
+            panY = panStartY + (e.clientY - dragStartY);
+            clampPan();
+            applyTransform();
+        });
+        window.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            stage.classList.remove('dragging');
+        });
+
+        // ── Clavier ──────────────────────────────────────────────
+        window.addEventListener('keydown', e => {
+            if (e.target.tagName === 'INPUT') return;
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  goTo(current + 1);
+            if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')    goTo(current - 1);
+            if (e.key === 'Escape')                                resetZoom();
+            if (e.key === '+' || e.key === '=') {
+                zoom = Math.min(MAX_ZOOM, zoom * 1.2); clampPan(); applyTransform();
+            }
+            if (e.key === '-') {
+                zoom = Math.max(MIN_ZOOM, zoom / 1.2);
+                if (zoom <= 1) { zoom = 1; panX = 0; panY = 0; }
+                clampPan(); applyTransform();
+            }
+        });
+
+        // ── Touch : swipe + pinch ─────────────────────────────────
+        let touchStartX = 0, pinchStartDist = 0, pinchStartZoom = 0;
+        stage.addEventListener('touchstart', e => {
+            if (e.touches.length === 1) {
+                touchStartX = e.touches[0].clientX;
+            } else if (e.touches.length === 2) {
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                pinchStartDist = Math.sqrt(dx*dx + dy*dy);
+                pinchStartZoom = zoom;
+            }
+        }, { passive: true });
+
+        stage.addEventListener('touchmove', e => {
+            e.preventDefault();
+            if (e.touches.length === 2) {
+                const dx   = e.touches[0].clientX - e.touches[1].clientX;
+                const dy   = e.touches[0].clientY - e.touches[1].clientY;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, pinchStartZoom * dist / pinchStartDist));
+                if (zoom <= 1) { zoom = 1; panX = 0; panY = 0; }
+                clampPan();
+                applyTransform();
+            }
+        }, { passive: false });
+
+        stage.addEventListener('touchend', e => {
+            if (zoom > 1 || e.changedTouches.length !== 1) return;
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            if (Math.abs(dx) > 55) dx < 0 ? goTo(current + 1) : goTo(current - 1);
+        });
+
+        // ── Fullscreen ───────────────────────────────────────────
+        const viewer   = document.getElementById('mag-viewer');
+        const fsBtn    = document.getElementById('mag-fullscreen-btn');
+        const fsIcon   = document.getElementById('mag-fs-icon');
+
+        const ICON_EXPAND   = '<polyline points="1,5 1,1 5,1"/><polyline points="11,1 15,1 15,5"/><polyline points="15,11 15,15 11,15"/><polyline points="5,15 1,15 1,11"/>';
+        const ICON_COMPRESS = '<polyline points="5,1 5,5 1,5"/><polyline points="15,5 11,5 11,1"/><polyline points="11,15 11,11 15,11"/><polyline points="1,11 5,11 5,15"/>';
+
+        fsBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                viewer.requestFullscreen && viewer.requestFullscreen();
+            } else {
+                document.exitFullscreen && document.exitFullscreen();
+            }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            const isFs = !!document.fullscreenElement;
+            fsIcon.innerHTML = isFs ? ICON_COMPRESS : ICON_EXPAND;
+            fsBtn.setAttribute('aria-label', isFs ? 'Quitter le plein écran' : 'Plein écran');
+        });
+
+        // ── Init ─────────────────────────────────────────────────
+        goTo(0);
+    })();
+    </script>
+
+    <script>
+        // ── Intro reveal ──
+        const magIntro = document.getElementById('mag-intro');
+        if (magIntro) {
+            new IntersectionObserver(([entry]) => {
+                magIntro.classList.toggle('is-visible', entry.isIntersecting);
+            }, { threshold: 0.15 }).observe(magIntro);
+        }
+    </script>
 </body>
 
 </html>

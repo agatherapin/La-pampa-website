@@ -14,7 +14,88 @@
             cursor: grabbing;
         }
 
-        /* Curseur spécifique world-exploration — modal géré par style.css */
+        /* ── Bouton Recherche ── */
+        #search-btn {
+            position: fixed;
+            top: 24px;
+            right: 270px;
+            height: 38px;
+            width: 38px;
+            border-radius: 50px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 11px;
+            overflow: hidden;
+            cursor: pointer;
+            z-index: 200;
+            transition: width var(--transition), border-color var(--transition), background var(--transition);
+        }
+        #search-btn:hover,
+        #search-btn:focus-within {
+            width: 230px;
+            border-color: var(--border-solid);
+        }
+        #search-btn svg {
+            flex-shrink: 0;
+            width: 15px;
+            height: 15px;
+            stroke: var(--text-muted);
+            stroke-width: 1.75;
+            fill: none;
+            stroke-linecap: round;
+            transition: stroke 0.2s ease;
+        }
+        #search-btn:hover svg,
+        #search-btn:focus-within svg {
+            stroke: var(--text);
+        }
+        #search-input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            font-family: var(--font-display);
+            font-size: 12px;
+            letter-spacing: 0.04em;
+            color: var(--text);
+            min-width: 0;
+            opacity: 0;
+            transition: opacity 0.22s ease 0.1s;
+            cursor: text;
+        }
+        #search-btn:hover #search-input,
+        #search-btn:focus-within #search-input {
+            opacity: 1;
+        }
+        #search-input::placeholder {
+            color: var(--text-faint);
+        }
+        #search-noresult {
+            position: fixed;
+            top: 72px;
+            right: 270px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 11px;
+            font-family: var(--font-display);
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 200;
+        }
+        #search-noresult.visible { opacity: 1; }
     </style>
     <!-- Anti-flash thème -->
     <script>
@@ -50,6 +131,16 @@
     <div id="instructions">
         Glisser pour tourner &nbsp;·&nbsp; Scroll pour zoomer &nbsp;·&nbsp; Cliquer pour lire
     </div>
+
+    <!-- Recherche -->
+    <div id="search-btn" role="search" title="Rechercher un article">
+        <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="6.5" cy="6.5" r="4.5"/>
+            <line x1="10" y1="10" x2="14" y2="14"/>
+        </svg>
+        <input type="text" id="search-input" placeholder="Rechercher un article…" autocomplete="off" spellcheck="false" />
+    </div>
+    <p id="search-noresult">Aucun résultat</p>
 
     <!-- Theme toggle + Recenter -->
     <button id="theme-toggle" title="Changer de thème">☾</button>
@@ -279,7 +370,7 @@
         const zoomDuration = 2500;
 
         document.addEventListener('mousedown', (e) => {
-            if (e.target.closest('#modal') || e.target.closest('#back-button') || e.target.closest('#theme-toggle')) return;
+            if (e.target.closest('#modal') || e.target.closest('#back-button') || e.target.closest('#theme-toggle') || e.target.closest('#search-btn')) return;
             isDragging = true;
             previousMouseX = e.clientX;
             previousMouseY = e.clientY;
@@ -381,6 +472,375 @@
         });
 
         } // ← fin de initScene()
+
+        // ── RECHERCHE ────────────────────────────────────────
+        (function () {
+            const searchInput    = document.getElementById('search-input');
+            const noResultEl     = document.getElementById('search-noresult');
+            let noResultTimer    = null;
+
+            function focusCard(plane) {
+                const pos  = plane.position;
+                // Calcul des angles Euler XYZ pour amener la carte face caméra
+                const r_yz = Math.sqrt(pos.y * pos.y + pos.z * pos.z);
+                targetRotationX = Math.atan2(pos.y, pos.z);
+                targetRotationY = Math.atan2(-pos.x, r_yz);
+                // Zoom léger
+                introZoom    = false;
+                targetCameraZ = 22;
+            }
+
+            function doSearch() {
+                const query = searchInput.value.trim().toLowerCase();
+                if (!query) return;
+
+                const match = planes.find(p =>
+                    p.userData && p.userData.title &&
+                    p.userData.title.toLowerCase().includes(query)
+                );
+
+                if (!match) {
+                    noResultEl.classList.add('visible');
+                    clearTimeout(noResultTimer);
+                    noResultTimer = setTimeout(() => noResultEl.classList.remove('visible'), 2500);
+                    return;
+                }
+
+                noResultEl.classList.remove('visible');
+                focusCard(match);
+                searchInput.value = '';
+                searchInput.blur();
+            }
+
+            searchInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') { e.preventDefault(); doSearch(); }
+                if (e.key === 'Escape') { searchInput.value = ''; searchInput.blur(); }
+            });
+
+            // Empêche le drag de se déclencher depuis la zone de recherche
+            document.getElementById('search-btn').addEventListener('mousedown', e => e.stopPropagation());
+        })();
+
+    </script>
+
+    <!-- ══════════════════════════════════════
+         CONTRIBUER — Bouton & Modal
+    ══════════════════════════════════════ -->
+    <style>
+        #contribuer-btn {
+            position: fixed;
+            top: 24px;
+            right: 120px; /* 24px + 40px toggle + 8px + 40px recenter + 8px gap */
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            border-radius: 50px;
+            height: 38px;
+            padding: 0 18px;
+            font-size: 12px;
+            font-family: var(--font-display);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text);
+            cursor: pointer;
+            z-index: 200;
+            transition: background var(--transition), color var(--transition), border-color var(--transition), opacity var(--transition);
+        }
+        #contribuer-btn.hidden { opacity: 0; pointer-events: none; }
+        #contribuer-btn:hover { background: var(--accent); color: #F5F5F5; border-color: var(--accent); }
+        #contribuer-modal {
+            position: fixed; inset: 0; width: 100%; height: 100%;
+            max-width: 100%; max-height: 100%; margin: 0; padding: 0;
+            border: none; background: transparent; z-index: 500;
+            opacity: 0; transition: opacity 0.35s ease;
+        }
+        #contribuer-modal.open { opacity: 1; }
+        #contribuer-modal::backdrop { background: rgba(10,10,10,0.82); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .modal-screen { position: absolute; inset: 0; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.32s ease, transform 0.38s cubic-bezier(0.16,1,0.3,1); transform: translateY(14px); }
+        .modal-screen.active { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .modal-inner { position: relative; z-index: 1; width: 100%; height: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 80px 24px 120px; }
+        .modal-inner-center { justify-content: center; }
+        .modal-content-box { width: 100%; max-width: 620px; }
+        .modal-close { position: fixed; top: 24px; right: 24px; width: 38px; height: 38px; border-radius: 50%; background: rgba(245,245,245,0.10); border: 1px solid rgba(245,245,245,0.14); color: #F5F5F5; font-size: 18px; font-family: system-ui, sans-serif; font-weight: 300; line-height: 1; cursor: pointer; z-index: 600; display: flex; align-items: center; justify-content: center; transition: background 0.2s ease, border-color 0.2s ease; }
+        .modal-close:hover { background: #E52E5E; border-color: #E52E5E; color: #F5F5F5; }
+        .modal-back { background: none; border: none; color: rgba(245,245,245,0.45); font-size: 11px; font-family: var(--font-display); letter-spacing: 0.10em; text-transform: uppercase; cursor: pointer; padding: 0; margin-bottom: 36px; transition: color 0.2s ease; }
+        .modal-back:hover { color: #F5F5F5; }
+        .modal-eyebrow { display: block; font-size: 11px; font-family: var(--font-display); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+        .modal-title { font-family: 'Instrument Serif', serif; font-size: clamp(38px,5.5vw,68px); font-weight: 400; line-height: 1.04; color: #F5F5F5; margin-bottom: 26px; letter-spacing: -0.02em; }
+        .modal-text { font-size: 15px; line-height: 1.75; color: rgba(245,245,245,0.65); margin-bottom: 36px; max-width: 500px; }
+        .modal-conditions { border-top: 1px solid rgba(245,245,245,0.09); border-bottom: 1px solid rgba(245,245,245,0.09); padding: 26px 0; margin-bottom: 26px; }
+        .conditions-label { font-size: 10px; font-family: var(--font-display); letter-spacing: 0.14em; text-transform: uppercase; color: rgba(245,245,245,0.35); margin-bottom: 18px; }
+        .conditions-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .conditions-list li { font-size: 14px; color: rgba(245,245,245,0.70); line-height: 1.55; padding-left: 18px; position: relative; }
+        .conditions-list li::before { content: '—'; position: absolute; left: 0; color: var(--accent); font-size: 11px; top: 2px; }
+        .modal-note { font-size: 12px; color: rgba(245,245,245,0.35); line-height: 1.65; margin-bottom: 40px; }
+        .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #F5F5F5; border: none; border-radius: 50px; height: 48px; padding: 0 32px; font-size: 12px; font-family: var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s ease, transform 0.2s ease; }
+        .btn-primary:hover { opacity: 0.84; transform: translateY(-1px); }
+        .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+        .btn-ghost { display: inline-flex; align-items: center; background: none; color: rgba(245,245,245,0.55); border: 1px solid rgba(245,245,245,0.14); border-radius: 50px; height: 48px; padding: 0 32px; font-size: 12px; font-family: var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; margin-top: 16px; transition: color 0.2s ease, border-color 0.2s ease; }
+        .btn-ghost:hover { color: #F5F5F5; border-color: rgba(245,245,245,0.32); }
+        .field-group { margin-bottom: 28px; }
+        .field-group label, .field-label { display: block; font-size: 10px; font-family: var(--font-display); letter-spacing: 0.12em; text-transform: uppercase; color: rgba(245,245,245,0.40); margin-bottom: 10px; }
+        .req { color: var(--accent); }
+        .field-group input[type="text"], .field-group input[type="email"] { width: 100%; background: rgba(245,245,245,0.05); border: 1px solid rgba(245,245,245,0.11); border-radius: 8px; height: 48px; padding: 0 16px; font-size: 14px; font-family: var(--font-display); color: #F5F5F5; outline: none; transition: border-color 0.2s ease, background 0.2s ease; }
+        .field-group input[type="text"]::placeholder, .field-group input[type="email"]::placeholder { color: rgba(245,245,245,0.22); }
+        .field-group input[type="text"]:focus, .field-group input[type="email"]:focus { border-color: rgba(245,245,245,0.30); background: rgba(245,245,245,0.07); }
+        .field-group input[type="text"].error, .field-group input[type="email"].error { border-color: var(--accent); }
+        .email-privacy { margin-top: 8px; font-size: 11px; font-family: var(--font-display); color: rgba(245,245,245,0.28); line-height: 1.6; }
+        .field-error { display: block; font-size: 11px; color: var(--accent); margin-top: 6px; min-height: 16px; font-family: var(--font-display); }
+        .editor-toolbar { display: flex; gap: 4px; padding: 8px 10px; background: rgba(245,245,245,0.04); border: 1px solid rgba(245,245,245,0.10); border-bottom: none; border-radius: 8px 8px 0 0; }
+        .editor-toolbar button { background: none; border: 1px solid transparent; border-radius: 4px; color: rgba(245,245,245,0.50); padding: 4px 10px; font-size: 12px; font-family: var(--font-display); letter-spacing: 0.04em; cursor: pointer; transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease; }
+        .editor-toolbar button:hover, .editor-toolbar button.active { background: rgba(245,245,245,0.08); border-color: rgba(245,245,245,0.14); color: #F5F5F5; }
+        .editor-area { min-height: 240px; background: rgba(245,245,245,0.05); border: 1px solid rgba(245,245,245,0.10); border-radius: 0 0 8px 8px; padding: 16px; font-size: 14px; font-family: var(--font-display); color: #F5F5F5; line-height: 1.75; outline: none; transition: border-color 0.2s ease; }
+        .editor-area:focus { border-color: rgba(245,245,245,0.28); }
+        .editor-area.error { border-color: var(--accent); }
+        .editor-area p, .editor-area div { margin-bottom: 10px; }
+        .editor-area h2 { font-size: 18px; font-weight: 600; margin: 12px 0 8px; color: #F5F5F5; }
+        .editor-area ul { padding-left: 20px; margin-bottom: 10px; }
+        .editor-area:empty::before { content: attr(data-placeholder); color: rgba(245,245,245,0.22); pointer-events: none; }
+        .upload-zone { border: 1px dashed rgba(245,245,245,0.18); border-radius: 8px; min-height: 110px; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; position: relative; transition: border-color 0.2s ease, background 0.2s ease; }
+        .upload-zone:hover, .upload-zone.drag-over { border-color: rgba(245,245,245,0.38); background: rgba(245,245,245,0.03); }
+        .upload-placeholder { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 28px; text-align: center; pointer-events: none; }
+        .upload-icon { font-size: 22px; color: rgba(245,245,245,0.22); }
+        .upload-placeholder > span { font-size: 13px; color: rgba(245,245,245,0.40); font-family: var(--font-display); }
+        .upload-link { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 13px; font-family: var(--font-display); text-decoration: underline; text-underline-offset: 2px; padding: 0; pointer-events: auto; }
+        .upload-hint { font-size: 11px !important; color: rgba(245,245,245,0.22) !important; }
+        .upload-preview { width: 100%; height: 200px; position: relative; }
+        .upload-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .upload-remove { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; border-radius: 50%; background: rgba(10,10,10,0.65); border: 1px solid rgba(245,245,245,0.14); color: #F5F5F5; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s ease; }
+        .upload-remove:hover { background: var(--accent); border-color: var(--accent); }
+        .form-actions { display: flex; flex-direction: column; align-items: flex-start; padding-top: 8px; gap: 6px; }
+        .modal-success { text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .success-check { width: 64px; height: 64px; border-radius: 50%; background: rgba(229,46,94,0.12); border: 1px solid rgba(229,46,94,0.28); color: var(--accent); font-size: 26px; display: flex; align-items: center; justify-content: center; margin-bottom: 32px; }
+        @media (max-width: 768px) { .modal-inner { padding: 72px 16px 100px; } .modal-title { font-size: 36px; } .editor-area { min-height: 180px; } }
+    </style>
+
+    <button id="contribuer-btn" aria-expanded="false" aria-controls="contribuer-modal">+ Contribuer</button>
+
+    <dialog id="contribuer-modal" aria-labelledby="modal-title-s1">
+        <button class="modal-close" id="modal-close" aria-label="Fermer">×</button>
+        <div class="modal-screen active" id="modal-s1">
+            <div class="modal-inner">
+                <div class="modal-content-box">
+                    <span class="modal-eyebrow">Blog collaboratif</span>
+                    <h2 class="modal-title" id="modal-title-s1">La Pampa,<br>c'est aussi vous.</h2>
+                    <p class="modal-text">La Pampa est un espace de curiosité partagée. Si vous avez une histoire à raconter, un endroit à faire découvrir ou une réflexion sur la culture, le voyage ou la création — cette page est pour vous.</p>
+                    <div class="modal-conditions">
+                        <p class="conditions-label">Ce qu'on attend d'un article</p>
+                        <ul class="conditions-list">
+                            <li>Un sujet lié à la culture, au voyage ou à la création</li>
+                            <li>Un texte original, entre 300 et 2000 mots</li>
+                            <li>Des images dont vous détenez les droits</li>
+                            <li>Un ton sincère — pas de contenu promotionnel</li>
+                        </ul>
+                    </div>
+                    <p class="modal-note">Les contributions sont relues avant publication. Vous serez contacté·e si votre article est retenu.</p>
+                    <button class="btn-primary" id="go-to-form">Je contribue <span aria-hidden="true">→</span></button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-screen" id="modal-s2" aria-labelledby="modal-title-s2">
+            <div class="modal-inner">
+                <div class="modal-content-box">
+                    <button class="modal-back" id="modal-back" type="button">← Retour</button>
+                    <h2 class="modal-title" id="modal-title-s2">Votre article</h2>
+                    <form id="contribuer-form" novalidate>
+                        <div class="field-group">
+                            <label for="f-title">Titre <span class="req">*</span></label>
+                            <input type="text" id="f-title" name="title" placeholder="Un titre qui donne envie de lire" maxlength="120" autocomplete="off" />
+                            <span class="field-error" id="err-title"></span>
+                        </div>
+                        <div class="field-group">
+                            <label for="f-desc">Résumé <span class="req">*</span></label>
+                            <input type="text" id="f-desc" name="description" placeholder="Une phrase résumant l'essentiel (affichée dans la grille)" maxlength="200" autocomplete="off" />
+                            <span class="field-error" id="err-desc"></span>
+                        </div>
+                        <div class="field-group field-editor">
+                            <p id="editor-label" class="field-label">Article <span class="req">*</span></p>
+                            <div class="editor-toolbar" role="toolbar" aria-label="Mise en forme">
+                                <button type="button" data-cmd="bold" title="Gras"><strong>B</strong></button>
+                                <button type="button" data-cmd="italic" title="Italique"><em>I</em></button>
+                                <button type="button" data-cmd="formatBlock" data-val="h2" title="Titre de section">H2</button>
+                                <button type="button" data-cmd="formatBlock" data-val="p" title="Paragraphe">¶</button>
+                                <button type="button" data-cmd="insertUnorderedList" title="Liste">· Liste</button>
+                            </div>
+                            <div class="editor-area" id="f-content" contenteditable="true" aria-multiline="true" aria-required="true" aria-labelledby="editor-label" data-placeholder="Rédigez votre article ici…" spellcheck="true"></div>
+                            <span class="field-error" id="err-content"></span>
+                        </div>
+                        <div class="field-group">
+                            <label for="f-image">Image de couverture</label>
+                            <div class="upload-zone" id="upload-zone">
+                                <input type="file" id="f-image" accept="image/jpeg,image/png,image/webp" hidden />
+                                <div id="upload-placeholder" class="upload-placeholder">
+                                    <span class="upload-icon">↑</span>
+                                    <span>Glissez une image ici ou <button type="button" id="upload-trigger" class="upload-link">parcourez</button></span>
+                                    <span class="upload-hint">JPG, PNG, WebP — max 4 Mo</span>
+                                </div>
+                                <div id="upload-preview" class="upload-preview" hidden>
+                                    <img id="preview-img" src="" alt="Aperçu de couverture" />
+                                    <button type="button" id="upload-remove" class="upload-remove" title="Supprimer l'image">×</button>
+                                </div>
+                            </div>
+                            <span class="field-error" id="err-image"></span>
+                        </div>
+                        <div class="field-group">
+                            <label for="f-author">Votre nom ou pseudo</label>
+                            <input type="text" id="f-author" name="author" placeholder="Laissez vide pour rester anonyme" maxlength="80" autocomplete="name" />
+                        </div>
+                        <div class="field-group">
+                            <label for="f-email">Adresse e-mail</label>
+                            <input type="email" id="f-email" name="email" placeholder="Pour vous informer si votre article est publié" maxlength="254" autocomplete="email" />
+                            <span class="field-error" id="err-email"></span>
+                            <p class="email-privacy">Utilisée uniquement pour vous notifier de la publication de votre article. Aucune communication marketing.</p>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary" id="btn-submit">
+                                <span id="btn-submit-label">Envoyer ma contribution</span>
+                                <span id="btn-submit-spinner" hidden aria-live="polite">···</span>
+                            </button>
+                            <span class="field-error" id="err-submit"></span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal-screen" id="modal-s3" aria-labelledby="modal-title-s3">
+            <div class="modal-inner modal-inner-center">
+                <div class="modal-content-box modal-success">
+                    <div class="success-check" aria-hidden="true">
+                        <svg width="22" height="16" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <polyline points="1,8 7,14 21,1" stroke="#E52E5E" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+                        </svg>
+                    </div>
+                    <h2 class="modal-title" id="modal-title-s3">Merci !</h2>
+                    <p class="modal-text">Votre contribution a bien été reçue. Elle sera relue prochainement.<br />Si elle est retenue, elle apparaîtra sur La Pampa.</p>
+                    <button class="btn-ghost" id="modal-done">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+    <script>
+    (function () {
+        const modal      = document.getElementById('contribuer-modal');
+        const openBtn    = document.getElementById('contribuer-btn');
+        const closeBtn   = document.getElementById('modal-close');
+        const s1         = document.getElementById('modal-s1');
+        const s2         = document.getElementById('modal-s2');
+        const s3         = document.getElementById('modal-s3');
+        const goToForm   = document.getElementById('go-to-form');
+        const backBtn    = document.getElementById('modal-back');
+        const doneBtn    = document.getElementById('modal-done');
+
+        function showScreen(next) {
+            [s1, s2, s3].forEach(s => s.classList.remove('active'));
+            next.classList.add('active');
+            const inner = next.querySelector('.modal-inner');
+            if (inner) inner.scrollTop = 0;
+        }
+        function openModal() {
+            modal.showModal();
+            requestAnimationFrame(() => modal.classList.add('open'));
+            showScreen(s1);
+            openBtn.setAttribute('aria-expanded', 'true');
+            openBtn.classList.add('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal() {
+            modal.classList.remove('open');
+            openBtn.setAttribute('aria-expanded', 'false');
+            openBtn.classList.remove('hidden');
+            document.body.style.overflow = '';
+            setTimeout(() => {
+                modal.close();
+                [s1, s2, s3].forEach(s => s.classList.remove('active'));
+                s1.classList.add('active');
+            }, 350);
+        }
+        openBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+        doneBtn.addEventListener('click', closeModal);
+        goToForm.addEventListener('click', () => showScreen(s2));
+        backBtn.addEventListener('click', () => showScreen(s1));
+        modal.addEventListener('cancel', e => { e.preventDefault(); closeModal(); });
+        modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+        const toolbar = document.querySelector('.editor-toolbar');
+        toolbar.addEventListener('mousedown', e => {
+            e.preventDefault();
+            const btn = e.target.closest('[data-cmd]');
+            if (!btn) return;
+            document.execCommand(btn.dataset.cmd, false, btn.dataset.val || null);
+        });
+
+        const uploadZone  = document.getElementById('upload-zone');
+        const fileInput   = document.getElementById('f-image');
+        const uploadTrig  = document.getElementById('upload-trigger');
+        const placeholder = document.getElementById('upload-placeholder');
+        const preview     = document.getElementById('upload-preview');
+        const previewImg  = document.getElementById('preview-img');
+        const removeBtn   = document.getElementById('upload-remove');
+        const errImage    = document.getElementById('err-image');
+        let imageBase64   = null;
+
+        function showPreview(dataUrl) { previewImg.src = dataUrl; placeholder.hidden = true; preview.hidden = false; imageBase64 = dataUrl; }
+        function clearPreview() { previewImg.src = ''; preview.hidden = true; placeholder.hidden = false; imageBase64 = null; fileInput.value = ''; }
+        function handleFile(file) {
+            if (!file) return;
+            if (!file.type.match(/^image\/(jpeg|png|webp)$/)) { errImage.textContent = 'Format non supporté — JPG, PNG ou WebP uniquement.'; return; }
+            if (file.size > 4 * 1024 * 1024) { errImage.textContent = 'Image trop volumineuse (max 4 Mo).'; return; }
+            errImage.textContent = '';
+            const reader = new FileReader();
+            reader.onload = e => showPreview(e.target.result);
+            reader.readAsDataURL(file);
+        }
+        uploadTrig.addEventListener('click', () => fileInput.click());
+        uploadZone.addEventListener('click', e => { if (e.target === uploadZone || e.target === placeholder) fileInput.click(); });
+        fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
+        removeBtn.addEventListener('click', e => { e.stopPropagation(); clearPreview(); });
+        uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+        uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0]); });
+
+        const form          = document.getElementById('contribuer-form');
+        const titleInput    = document.getElementById('f-title');
+        const descInput     = document.getElementById('f-desc');
+        const contentArea   = document.getElementById('f-content');
+        const authorInput   = document.getElementById('f-author');
+        const emailInput    = document.getElementById('f-email');
+        const submitBtn     = document.getElementById('btn-submit');
+        const submitLabel   = document.getElementById('btn-submit-label');
+        const submitSpinner = document.getElementById('btn-submit-spinner');
+        const errTitle      = document.getElementById('err-title');
+        const errDesc       = document.getElementById('err-desc');
+        const errContent    = document.getElementById('err-content');
+        const errEmailField = document.getElementById('err-email');
+        const errSubmit     = document.getElementById('err-submit');
+
+        function validate() {
+            let ok = true;
+            if (!titleInput.value.trim()) { errTitle.textContent = 'Le titre est requis.'; titleInput.classList.add('error'); ok = false; } else { errTitle.textContent = ''; titleInput.classList.remove('error'); }
+            if (!descInput.value.trim()) { errDesc.textContent = 'Le résumé est requis.'; descInput.classList.add('error'); ok = false; } else { errDesc.textContent = ''; descInput.classList.remove('error'); }
+            if (!(contentArea.innerText || '').trim()) { errContent.textContent = "Le contenu de l'article est requis."; contentArea.classList.add('error'); ok = false; } else { errContent.textContent = ''; contentArea.classList.remove('error'); }
+            const emailVal = emailInput.value.trim();
+            if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) { errEmailField.textContent = 'Adresse e-mail invalide.'; emailInput.classList.add('error'); ok = false; } else { errEmailField.textContent = ''; emailInput.classList.remove('error'); }
+            return ok;
+        }
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+            if (!validate()) return;
+            submitBtn.disabled = true; submitLabel.hidden = true; submitSpinner.hidden = false; errSubmit.textContent = '';
+            const payload = { title: titleInput.value.trim(), description: descInput.value.trim(), content: contentArea.innerHTML, cover_image: imageBase64 || '', author_name: authorInput.value.trim(), email: emailInput.value.trim() };
+            try {
+                const res = await fetch('/api/contributions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (res.ok) { showScreen(s3); form.reset(); clearPreview(); contentArea.innerHTML = ''; }
+                else { const data = await res.json().catch(() => ({})); errSubmit.textContent = data.error || 'Une erreur est survenue. Réessayez.'; }
+            } catch { errSubmit.textContent = "Impossible d'envoyer. Vérifiez votre connexion."; }
+            finally { submitBtn.disabled = false; submitLabel.hidden = false; submitSpinner.hidden = true; }
+        });
+    })();
     </script>
 </body>
 </html>

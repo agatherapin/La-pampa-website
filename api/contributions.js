@@ -10,6 +10,7 @@
 //   content     TEXT        NOT NULL,
 //   cover_image TEXT        NOT NULL DEFAULT '',
 //   author_name TEXT        NOT NULL DEFAULT '',
+//   email       TEXT        NOT NULL DEFAULT '',
 //   status      TEXT        NOT NULL DEFAULT 'pending',
 //   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 // );
@@ -22,6 +23,8 @@ const {
   setSecurityHeaders,
   isJsonRequest,
 } = require("./admin/_security");
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 module.exports = async function handler(req, res) {
   setSecurityHeaders(res);
@@ -41,7 +44,7 @@ module.exports = async function handler(req, res) {
     return res.status(429).json({ error: "Trop de soumissions, réessayez dans une heure." });
   }
 
-  const { title, description, content, cover_image, author_name } = req.body || {};
+  const { title, description, content, cover_image, author_name, email } = req.body || {};
 
   // Validation
   if (!title || typeof title !== "string" || !title.trim()) {
@@ -58,6 +61,11 @@ module.exports = async function handler(req, res) {
   }
   if (content.length > 100_000) {
     return res.status(400).json({ error: "Contenu trop long" });
+  }
+  if (email && typeof email === "string" && email.trim()) {
+    if (!EMAIL_RE.test(email.trim()) || email.length > 254) {
+      return res.status(400).json({ error: "Adresse e-mail invalide" });
+    }
   }
   // Image : data URL base64 — ~4 Mo encodé ≈ 5,5 Mo en base64
   if (cover_image) {
@@ -76,13 +84,14 @@ module.exports = async function handler(req, res) {
 
   try {
     await sql`
-      INSERT INTO contributions (title, description, content, cover_image, author_name)
+      INSERT INTO contributions (title, description, content, cover_image, author_name, email)
       VALUES (
         ${title.trim()},
         ${(typeof description === "string" ? description : "").trim()},
         ${content.trim()},
         ${cover_image || ""},
-        ${(typeof author_name === "string" ? author_name : "").trim().slice(0, 80)}
+        ${(typeof author_name === "string" ? author_name : "").trim().slice(0, 80)},
+        ${(typeof email === "string" ? email : "").trim().slice(0, 254)}
       )
     `;
     return res.status(201).json({ success: true });

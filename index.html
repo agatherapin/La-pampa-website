@@ -48,7 +48,7 @@
         header .video-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.45);
+            background: rgba(0, 0, 0, 0.584);
             z-index: 1;
         }
 
@@ -63,34 +63,42 @@
 
         .hero-tagline {
             position: absolute;
-            bottom: 14%;
+            bottom: 10%;
             left: 6%;
             z-index: 10;
             color: #F5F5F5;
-            font-family: 'Instrument Serif', serif;
-            font-weight: 400;
-            line-height: 1.05;
             pointer-events: none;
+            line-height: 1;
         }
 
-        .hero-tagline span {
+        .hero-tagline-small {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(28px, 3.5vw, 60px);
+            font-weight: 400;
             display: block;
+            opacity: 0.88;
+            margin-bottom: 0.05em;
+            margin-left: 1vw;
         }
 
-        .hero-line-1 {
-            font-size: clamp(20px, 4vw, 70px);
-            margin-left: 0;
+        .hero-tagline-medium {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(28px, 3.5vw, 60px);
+            font-weight: 400;
+            display: block;
+            opacity: 0.88;
+            margin-bottom: 0.05em;
+            margin-left: 4vw;
         }
 
-        .hero-line-2 {
-            font-size: clamp(20px, 4vw, 70px);
-            margin-left: 3.5vw;
-        }
-
-        .hero-line-3 {
-            font-size: clamp(64px, 13vw, 200px);
-            margin-left: 9vw;
+        .hero-tagline-large {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(80px, 14vw, 240px);
+            font-weight: 400;
             letter-spacing: -0.03em;
+            display: block;
+            margin-bottom: 0.1em;
+            margin-left: 11vw;
         }
 
         main {
@@ -121,7 +129,8 @@
             transform-origin: center center;
         }
 
-        .sg-slide img {
+        .sg-slide img,
+        .sg-slide video {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
@@ -179,8 +188,8 @@
             align-items: center;
             padding: 10px 36px;
             background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             border: 1px solid var(--glass-border);
             border-radius: 50px;
             box-shadow: var(--shadow-lg);
@@ -210,6 +219,138 @@
 
         .nav-links a:hover {
             color: var(--accent);
+        }
+
+        /* ── Footer ── */
+        .site-footer {
+            background: var(--bg);
+            border-top: 1px solid var(--border-solid);
+            padding: 56px 6vw 120px;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .footer-brand-name {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: clamp(28px, 4vw, 52px);
+            letter-spacing: -0.02em;
+            color: var(--text);
+            line-height: 1;
+            display: block;
+        }
+
+        .footer-baseline {
+            font-family: var(--font-body);
+            font-weight: 400;
+            font-size: 19px;
+            color: var(--accent);
+            margin-top: 8px;
+            letter-spacing: 0.01em;
+            display: block;
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .footer-links a {
+            font-family: var(--font-body);
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text);
+        }
+
+        .footer-instagram {
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-instagram svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: var(--text-muted);
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: stroke 0.2s ease;
+        }
+
+        .footer-instagram:hover svg {
+            stroke: var(--text);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 24px;
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .footer-legal span,
+        .footer-legal a {
+            font-family: var(--font-body);
+            font-size: 11px;
+            color: var(--text-faint);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            transition: color 0.2s ease;
+        }
+
+        .footer-legal a:hover {
+            color: var(--text-muted);
+        }
+
+        .footer-back-top {
+            font-family: var(--font-body);
+            font-size: 11px;
+            color: var(--text-faint);
+            text-decoration: none;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s ease;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .footer-back-top:hover {
+            color: var(--text-muted);
+        }
+
+        .footer-back-top svg {
+            width: 12px;
+            height: 12px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         /* ── Manifesto section ── */
@@ -242,6 +383,9 @@
             line-height: 1.7;
             color: var(--text-muted);
             max-width: 420px;
+            text-align: left;
+            orphans: 3;
+            widows: 3;
             opacity: 0;
             transform: translateY(30px);
             transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
@@ -263,12 +407,15 @@
             font-family: var(--font-display);
             font-size: clamp(72px, 13vw, 200px);
             font-weight: 700;
-            line-height: 0.93;
+            line-height: 0.8;
             letter-spacing: -0.03em;
             color: var(--text);
             text-align: center;
             margin-bottom: 6vh;
         }
+        
+       
+
 
         .tb-line {
             display: block;
@@ -277,16 +424,21 @@
         }
 
         /* décalages asymétriques autour du centre */
-        .tb-line:nth-child(1) { left: -3vw; }
-        .tb-line:nth-child(2) { left:  5vw; }
-        .tb-line:nth-child(3) { left: -1vw; }
+        .tb-line:nth-child(1) { left: -8vw; }
+        .tb-line:nth-child(2) { left:  15vw; }
+        .tb-line:nth-child(3) { left: -4vw; }
 
         .tb-line-inner {
             display: block;
             opacity: 0;
+            color: var(--text);
             transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1),
                         opacity 0.6s ease,
                         color 0.25s ease;
+        }
+        
+         .tb-line-inner:hover {
+            color: var(--accent);
         }
 
         .tb-line:nth-child(odd)  .tb-line-inner { transform: translateX(-60px); }
@@ -300,13 +452,10 @@
         #text-block.is-visible .tb-line:nth-child(2) .tb-line-inner { transition-delay: 0.1s; }
         #text-block.is-visible .tb-line:nth-child(3) .tb-line-inner { transition-delay: 0.2s; }
 
-        .tb-line:hover .tb-line-inner {
-            color: var(--accent);
-        }
 
         .tb-sub {
             text-align: center;
-            padding: 0 6vw;
+            padding: 0 2vw;
             font-size: clamp(12px, 1vw, 15px);
             line-height: 1.7;
             color: var(--text-muted);
@@ -392,34 +541,42 @@
 
 <body>
     <header id="logo-header">
-        <img class="header-bg" src="img/video-exemple.gif" alt="">
+        <video class="header-bg" autoplay muted loop playsinline>
+            <source src="img/Montage_lapampa.mp4">
+        </video>
         <div class="video-overlay"></div>
         <canvas id="c"></canvas>
         <div class="hero-tagline">
-            <span class="hero-line-1">Le média</span>
-            <span class="hero-line-2">des scènes</span>
-            <span class="hero-line-3">hors&#8209;radar</span>
+            <span class="hero-tagline-small">Le média</span>
+            <span class="hero-tagline-medium">des scènes</span>
+            <span class="hero-tagline-large">hors&#8209;radar</span>
         </div>
     </header>
 
     <main>
     <section id="manifesto">
         <div class="manifesto-inner">
-            <p class="manifesto-text">Là où les regards ne vont pas encore, LA PAMPA explore.<br>Design, typographie, musique, art – les scènes qui façonnent<br>demain, racontées pour ceux qui veulent voir avant les autres.</p>
-            <p class="manifesto-sub">La Pampa documente les scènes qui existent en dehors des algorithmes — les salles trop petites pour les radars, les labels trop indépendants pour les playlists, les artistes qui construisent leur public un concert à la fois. Pas de tendances. Pas de classements. Juste le son.</p>
+            <p class="manifesto-text">Là où les regards ne vont pas encore, La Pampa explore.<br>Design, typographie, musique, art : les scènes qui façonnent<br>demain, racontées pour ceux qui veulent voir avant les autres.</p>
+            <p class="manifesto-sub">La Pampa documente les scènes créatives provinciales.<br> Celles qui ne demandent qu'à être vues, qu'à être entendues. <br>Cet espace vous propose des outils pour vous inspirer quotidiennement, loin des algorithmes et du scroll. Découvrez un espace communautaire pour partager et explorer le vaste monde de l'art et du design. <br/><br/><em>Un espace pour les créatifs, par les créatifs.</em></p>
         </div>
     </section>
 
     <section id="scroll-gallery">
         <div class="sg-sticky">
             <div class="sg-slide" data-index="0">
-                <img src="https://picsum.photos/seed/pampa1/900/1200" alt="" />
+                <video class="sg-slide-video" autoplay muted loop playsinline>
+                    <source src="img/GIF-mag.mp4">
+                </video>
             </div>
             <div class="sg-slide" data-index="1">
-                <img src="https://picsum.photos/seed/pampa2/900/1200" alt="" />
+                <video class="sg-slide-video" autoplay muted loop playsinline>
+                    <source src="img/GIF-world.mp4">
+                </video>
             </div>
             <div class="sg-slide" data-index="2">
-                <img src="https://picsum.photos/seed/pampa3/900/1200" alt="" />
+                <video class="sg-slide-video" autoplay muted loop playsinline>
+                    <source src="img/GIF-rando.mp4">
+                </video>
             </div>
             <div class="sg-text">
                 <p></p>
@@ -429,11 +586,11 @@
 
     <section id="text-block">
         <div class="tb-headline">
-            <span class="tb-line"><span class="tb-line-inner">La création</span></span>
-            <span class="tb-line"><span class="tb-line-inner">ne vit pas</span></span>
-            <span class="tb-line"><span class="tb-line-inner">qu'à Paris.</span></span>
+            <span class="tb-line"><span class="tb-line-inner">LA CRÉATION</span></span>
+            <span class="tb-line"><span class="tb-line-inner">NE VIT PAS</span></span>
+            <span class="tb-line"><span class="tb-line-inner">QU'À PARIS.</span></span>
         </div>
-        <p class="tb-sub">La Pampa donne la parole aux talents créatifs qui travaillent en province — designers, typographes, musiciens, artistes. Parce que les scènes qui comptent ne sont pas toutes dans la capitale.</p>
+        <p class="tb-sub">La Pampa donne la parole aux talents créatifs qui travaillent en province. Parce que les scènes qui comptent ne sont pas toutes dans la capitale.</p>
     </section>
 
     <section id="cta-tools">
@@ -803,9 +960,9 @@
             const imgEls = slides.map(s => s.querySelector('img'));
 
             const TEXTS = [
-                "Un magazine qui met à l'honneur les talents créatifs qui travaillent loin des capitales.",
-                "Une sphère 3D à explorer librement — naviguez, zoomez, cliquez. La curiosité fait le reste.",
-                "Au petit bonheur la chance — laissez le contenu venir à vous, sans chercher."
+                "Un magazine pour mettre à l'honneur les artistes, les espaces et les initiatives créatives provinciales.",
+                "Une sphère 3D pour explorer librement et découvrir des centaines d'articles. Naviguez, zoomez, cliquez, la curiosité fait le reste.",
+                "Au petit bonheur la chance. Lancer le randomizer et laisser le contenu venir à vous, sans chercher."
             ];
 
             function lerp(a, b, t) { return a + (b - a) * t; }
@@ -918,15 +1075,92 @@
 
     </script>
 
+    <footer class="site-footer">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <span class="footer-brand-name">La Pampa</span>
+                <span class="footer-baseline">Le média des scènes hors-radar</span>
+            </div>
+            <div class="footer-links">
+                <a href="mailto:contact@lapampa.fr" class="footer-link">Contact</a>
+                <a href="https://www.instagram.com/lapampa_media/" class="footer-instagram" aria-label="Instagram" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                        <circle cx="12" cy="12" r="4.5"/>
+                        <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-legal">
+                <span>© 2025 La Pampa</span>
+            </div>
+            <button class="footer-back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+                <svg viewBox="0 0 12 12"><polyline points="1,9 6,3 11,9"/></svg>
+                Haut de page
+            </button>
+        </div>
+    </footer>
+
     <script src="ui.js"></script>
     <script>
-        // ── Manifesto reveal ──
-        [document.getElementById('manifesto'), document.getElementById('text-block')].forEach(el => {
-            if (!el) return;
+        // ── Manifesto reveal (toggle) ──
+        const manifesto = document.getElementById('manifesto');
+        if (manifesto) {
             new IntersectionObserver(([entry]) => {
-                el.classList.toggle('is-visible', entry.isIntersecting);
-            }, { threshold: 0.15 }).observe(el);
-        });
+                manifesto.classList.toggle('is-visible', entry.isIntersecting);
+            }, { threshold: 0.15 }).observe(manifesto);
+        }
+
+        // ── Text-block : scramble reveal (one-shot) ──
+        (function () {
+            const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const section = document.getElementById('text-block');
+            if (!section) return;
+
+            const inners  = Array.from(section.querySelectorAll('.tb-line-inner'));
+            const originals = inners.map(el => el.textContent);
+            const delays    = [0, 100, 200]; // correspond aux transition-delay CSS
+
+            function scramble(el, finalText, delay) {
+                const duration  = 1100;  // durée totale
+                const frameRate = 40;    // ms entre chaque changement de lettres (plus lent = moins de clignotement)
+                setTimeout(() => {
+                    let start    = null;
+                    let lastDraw = 0;
+                    (function tick(ts) {
+                        if (!start) start = ts;
+                        const t      = Math.min((ts - start) / duration, 1);
+                        const locked = Math.floor(t * finalText.length);
+                        // Ne redessine les lettres aléatoires que toutes les `frameRate` ms
+                        if (ts - lastDraw >= frameRate || t >= 1) {
+                            lastDraw = ts;
+                            let out = '';
+                            for (let i = 0; i < finalText.length; i++) {
+                                const ch = finalText[i];
+                                if (i < locked || !/[a-zA-Z]/.test(ch)) {
+                                    out += ch;
+                                } else {
+                                    out += CHARS[Math.floor(Math.random() * CHARS.length)];
+                                }
+                            }
+                            el.textContent = out;
+                        }
+                        if (t < 1) requestAnimationFrame(tick);
+                        else el.textContent = finalText;
+                    })(performance.now());
+                }, delay);
+            }
+
+            let triggered = false;
+            new IntersectionObserver(([entry]) => {
+                if (!entry.isIntersecting || triggered) return;
+                triggered = true;
+                section.classList.add('is-visible');
+                inners.forEach((el, i) => scramble(el, originals[i], delays[i]));
+            }, { threshold: 0.15 }).observe(section);
+        })();
     </script>
 </body>
 

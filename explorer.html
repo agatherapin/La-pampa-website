@@ -277,9 +277,10 @@
             top: 24px;
             right: 72px; /* 24px + 40px toggle + 8px gap */
             background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
             border-radius: 50px;
             height: 38px;
             padding: 0 18px;
@@ -290,7 +291,7 @@
             color: var(--text);
             cursor: pointer;
             z-index: 200;
-            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+            transition: background var(--transition), color var(--transition), border-color var(--transition), opacity var(--transition);
         }
 
         #contribuer-btn.hidden {
@@ -551,7 +552,8 @@
 
         .req { color: var(--accent); }
 
-        .field-group input[type="text"] {
+        .field-group input[type="text"],
+        .field-group input[type="email"] {
             width: 100%;
             background: rgba(245, 245, 245, 0.05);
             border: 1px solid rgba(245, 245, 245, 0.11);
@@ -565,12 +567,23 @@
             transition: border-color 0.2s ease, background 0.2s ease;
         }
 
-        .field-group input[type="text"]::placeholder { color: rgba(245, 245, 245, 0.22); }
-        .field-group input[type="text"]:focus {
+        .field-group input[type="text"]::placeholder,
+        .field-group input[type="email"]::placeholder { color: rgba(245, 245, 245, 0.22); }
+        .field-group input[type="text"]:focus,
+        .field-group input[type="email"]:focus {
             border-color: rgba(245, 245, 245, 0.30);
             background: rgba(245, 245, 245, 0.07);
         }
-        .field-group input[type="text"].error { border-color: var(--accent); }
+        .field-group input[type="text"].error,
+        .field-group input[type="email"].error { border-color: var(--accent); }
+
+        .email-privacy {
+            margin-top: 8px;
+            font-size: 11px;
+            font-family: var(--font-display);
+            color: rgba(245, 245, 245, 0.28);
+            line-height: 1.6;
+        }
 
         .field-error {
             display: block;
@@ -892,6 +905,12 @@
                             <label for="f-author">Votre nom ou pseudo</label>
                             <input type="text" id="f-author" name="author" placeholder="Laissez vide pour rester anonyme" maxlength="80" autocomplete="name" />
                         </div>
+                        <div class="field-group">
+                            <label for="f-email">Adresse e-mail</label>
+                            <input type="email" id="f-email" name="email" placeholder="Pour vous informer si votre article est publié" maxlength="254" autocomplete="email" />
+                            <span class="field-error" id="err-email"></span>
+                            <p class="email-privacy">Utilisée uniquement pour vous notifier de la publication de votre article. Aucune communication marketing.</p>
+                        </div>
                         <div class="form-actions">
                             <button type="submit" class="btn-primary" id="btn-submit">
                                 <span id="btn-submit-label">Envoyer ma contribution</span>
@@ -908,9 +927,13 @@
         <div class="modal-screen" id="modal-s3" aria-labelledby="modal-title-s3">
             <div class="modal-inner modal-inner-center">
                 <div class="modal-content-box modal-success">
-                    <div class="success-check" aria-hidden="true">✓</div>
+                    <div class="success-check" aria-hidden="true">
+                        <svg width="22" height="16" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <polyline points="1,8 7,14 21,1" stroke="#E52E5E" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+                        </svg>
+                    </div>
                     <h2 class="modal-title" id="modal-title-s3">Merci !</h2>
-                    <p class="modal-text">Votre contribution a bien été reçue. Elle sera relue prochainement — si elle est retenue, elle apparaîtra sur La Pampa.</p>
+                    <p class="modal-text">Votre contribution a bien été reçue. Elle sera relue prochainement.<br />Si elle est retenue, elle apparaîtra sur La Pampa.</p>
                     <button class="btn-ghost" id="modal-done">Fermer</button>
                 </div>
             </div>
@@ -1056,12 +1079,14 @@
         const descInput    = document.getElementById('f-desc');
         const contentArea  = document.getElementById('f-content');
         const authorInput  = document.getElementById('f-author');
+        const emailInput   = document.getElementById('f-email');
         const submitBtn    = document.getElementById('btn-submit');
         const submitLabel  = document.getElementById('btn-submit-label');
         const submitSpinner = document.getElementById('btn-submit-spinner');
         const errTitle     = document.getElementById('err-title');
         const errDesc      = document.getElementById('err-desc');
         const errContent   = document.getElementById('err-content');
+        const errEmailField = document.getElementById('err-email');
         const errSubmit    = document.getElementById('err-submit');
 
         function validate() {
@@ -1090,6 +1115,15 @@
                 errContent.textContent = '';
                 contentArea.classList.remove('error');
             }
+            const emailVal = emailInput.value.trim();
+            if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+                errEmailField.textContent = 'Adresse e-mail invalide.';
+                emailInput.classList.add('error');
+                ok = false;
+            } else {
+                errEmailField.textContent = '';
+                emailInput.classList.remove('error');
+            }
             return ok;
         }
 
@@ -1108,6 +1142,7 @@
                 content:     contentArea.innerHTML,
                 cover_image: imageBase64 || '',
                 author_name: authorInput.value.trim(),
+                email:       emailInput.value.trim(),
             };
 
             try {
