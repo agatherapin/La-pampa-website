@@ -48,7 +48,7 @@
         header .video-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.584);
+            background: rgba(0, 0, 0, 0.71);
             z-index: 1;
         }
 
@@ -73,32 +73,11 @@
 
         .hero-tagline-small {
             font-family: 'Instrument Serif', serif;
-            font-size: clamp(28px, 3.5vw, 60px);
+            font-size: 80px;
             font-weight: 400;
             display: block;
             opacity: 0.88;
-            margin-bottom: 0.05em;
-            margin-left: 1vw;
-        }
-
-        .hero-tagline-medium {
-            font-family: 'Instrument Serif', serif;
-            font-size: clamp(28px, 3.5vw, 60px);
-            font-weight: 400;
-            display: block;
-            opacity: 0.88;
-            margin-bottom: 0.05em;
-            margin-left: 4vw;
-        }
-
-        .hero-tagline-large {
-            font-family: 'Instrument Serif', serif;
-            font-size: clamp(80px, 14vw, 240px);
-            font-weight: 400;
-            letter-spacing: -0.03em;
-            display: block;
-            margin-bottom: 0.1em;
-            margin-left: 11vw;
+            margin-bottom: 0.4em;
         }
 
         main {
@@ -517,7 +496,8 @@
             transition: width 0.55s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .cta-img-wrap img {
+        .cta-img-wrap img,
+        .cta-img-wrap video {
             height: 0.72em;
             width: 1.4em;
             width: clamp(80px, 13vw, 190px);
@@ -547,9 +527,7 @@
         <div class="video-overlay"></div>
         <canvas id="c"></canvas>
         <div class="hero-tagline">
-            <span class="hero-tagline-small">Le média</span>
-            <span class="hero-tagline-medium">des scènes</span>
-            <span class="hero-tagline-large">hors&#8209;radar</span>
+            <span class="hero-tagline-small">Le média des scènes hors&#8209;radar</span>
         </div>
     </header>
 
@@ -597,21 +575,21 @@
         <a class="cta-item" href="magazine.html">
             <div class="cta-content">
                 <span class="cta-half cta-left">Magazine</span>
-                <div class="cta-img-wrap"><img src="https://picsum.photos/seed/ctaA/600/300" alt="" /></div>
+                <div class="cta-img-wrap"><video src="img/GIF-mag.mp4" autoplay muted loop playsinline></video></div>
                 <span class="cta-half cta-right">Digital</span>
             </div>
         </a>
         <a class="cta-item" href="explorer.html">
             <div class="cta-content">
                 <span class="cta-half cta-left">World</span>
-                <div class="cta-img-wrap"><img src="https://picsum.photos/seed/ctaB/600/300" alt="" /></div>
+                <div class="cta-img-wrap"><video src="img/GIF-world.mp4" autoplay muted loop playsinline></video></div>
                 <span class="cta-half cta-right">Explorer</span>
             </div>
         </a>
         <a class="cta-item" href="explorer.html">
             <div class="cta-content">
                 <span class="cta-half cta-left">Rando</span>
-                <div class="cta-img-wrap"><img src="https://picsum.photos/seed/ctaC/600/300" alt="" /></div>
+                <div class="cta-img-wrap"><video src="img/GIF-rando.mp4" autoplay muted loop playsinline></video></div>
                 <span class="cta-half cta-right">mizer</span>
             </div>
         </a>

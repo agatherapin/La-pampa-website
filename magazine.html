@@ -367,6 +367,9 @@
             height: 100vh;
         }
 
+        /* Masque la nav en fullscreen */
+        body.mag-fullscreen nav { display: none; }
+
         /* État zoomé */
         #mag-stage.zoomed { cursor: grab; }
         #mag-stage.zoomed.dragging { cursor: grabbing; }
@@ -483,10 +486,6 @@
                     <polyline points="5,15 1,15 1,11"/>
                 </svg>
             </button>
-
-            <!-- Hint -->
-            <p id="mag-zoom-hint">Double-clic pour agrandir · Échap pour réinitialiser</p>
-
         </section>
     </main>
 
@@ -1039,6 +1038,7 @@
             const isFs = !!document.fullscreenElement;
             fsIcon.innerHTML = isFs ? ICON_COMPRESS : ICON_EXPAND;
             fsBtn.setAttribute('aria-label', isFs ? 'Quitter le plein écran' : 'Plein écran');
+            document.body.classList.toggle('mag-fullscreen', isFs);
         });
 
         // ── Init ─────────────────────────────────────────────────
