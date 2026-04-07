@@ -81,8 +81,6 @@
             max-width: 480px;
             text-align: justify;
             text-justify: inter-word;
-            hyphens: auto;
-            -webkit-hyphens: auto;
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.8s ease 0.15s, transform 0.8s ease 0.15s;
@@ -92,6 +90,31 @@
         #mag-intro.is-visible .mag-intro-sub {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        /* ── CTA bloc ── */
+        .mag-cta {
+            padding: 80px 6vw 80px;
+        }
+        .mag-cta-title {
+            font-family: var(--font-body);
+            font-size: clamp(22px, 3vw, 38px);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            margin-bottom: 20px;
+        }
+        .mag-cta-text {
+            font-family: var(--font-body);
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text-muted);
+            max-width: 640px;
+        }
+        .mag-cta-text a {
+            color: inherit;
+            text-decoration: underline;
+            text-underline-offset: 3px;
         }
 
         /* ── Footer ── */
@@ -119,8 +142,8 @@
         .footer-baseline {
             font-family: var(--font-body);
             font-weight: 400;
-            font-size: 13px;
-            color: var(--text-muted);
+            font-size: 19px;
+            color: var(--accent);
             margin-top: 8px;
             letter-spacing: 0.01em;
             display: block;
@@ -199,8 +222,10 @@
         ══════════════════════════════════════ */
         #mag-viewer {
             position: relative;
-            width: 100%;
-            height: 100vh;
+            width: calc(100% - 12vw);
+            margin: 0 6vw;
+            height: 88vh;
+            border-radius: 12px;
             display: flex;
             align-items: stretch;
             background: #0A0A0A;
@@ -444,8 +469,10 @@
         <!-- ── Intro ── -->
         <section id="mag-intro">
             <span class="mag-intro-eyebrow">Numéro 1</span>
-            <p class="mag-intro-title">Le premier numéro<br>de La Pampa.</p>
-            <p class="mag-intro-sub">Un magazine qui documente les scènes créatives qui existent en dehors des radars. Design, typographie, musique, photographie — raconté par ceux qui y sont.</p>
+            <p class="mag-intro-title">Le magazine des scènes<br>hors-radar.</p>
+            <p class="mag-intro-sub">Découvrez le tout premier numéro du magazine La Pampa ! <br> Un espace qui met en avant et qui documente les scènes créatives provinciales.
+                Dans ce numéro, découvrez des graphistes, photographes, illustrateurs... mais aussi des collectifs, des lieux, des événements, et bien plus encore, issus de différentes régions de France.
+            </p>
         </section>
 
         <!-- ── Viewer ── -->
@@ -789,14 +816,19 @@
         loop();
     </script>
 
+        <section class="mag-cta">
+            <h2 class="mag-cta-title">Vous souhaitez figurer dans le magazine ?</h2>
+            <p class="mag-cta-text">Vous êtes artiste, au sein d'une asso, d'un lieu, d'un collectif... Vous souhaitez mettre en avant votre projet, créer du réseau ? Postulez pour figurer dans le magazine en envoyant votre profil par mail à <a href="mailto:lapampamedia@gmail.com">lapampamedia@gmail.com</a> ou sur instagram <a href="https://www.instagram.com/lapampa_media/" target="_blank" rel="noopener">@lapampa_media</a></p>
+        </section>
+
     <footer class="site-footer">
         <div class="footer-top">
             <div class="footer-brand">
                 <span class="footer-brand-name">La Pampa</span>
-                <span class="footer-baseline">le média des scènes hors-radar</span>
+                <span class="footer-baseline">Le média des scènes hors-radar</span>
             </div>
             <div class="footer-links">
-                <a href="mailto:contact@lapampa.fr" class="footer-link">Contact</a>
+                <a href="mailto:lapampamedia@gmail.com" class="footer-link">Contact</a>
                 <a href="https://www.instagram.com/lapampa_media/" class="footer-instagram" aria-label="Instagram" target="_blank" rel="noopener">
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
@@ -809,8 +841,6 @@
         <div class="footer-bottom">
             <div class="footer-legal">
                 <span>© 2025 La Pampa</span>
-                <a href="#">Conditions générales d'utilisation</a>
-                <a href="#">Mentions légales</a>
             </div>
             <button class="footer-back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
                 <svg viewBox="0 0 12 12"><polyline points="1,9 6,3 11,9"/></svg>

@@ -30,7 +30,12 @@ document.body.insertAdjacentHTML('beforeend', `
 const panels = {
     contact: `
         <h2>Contact</h2>
-        <p>contact@lapampa.com</p>
+        <p>Si vous souhaitez prendre part au projet La Pampa en soumettant votre profil pour le magazine ou en rédigeant un article pour le blog, 
+        n'hésitez pas nous à écrire par mail ! Nous serons ravis de vous lire et d'échanger avec vous. </p>
+        <p>Pour toutes questions ou commentaires, n'hésitez pas à nous contacter. </p>
+        <br>
+        <p>mail : <a href="mailto:lapampamedia@gmail.com">lapampamedia@gmail.com</a></p>
+        <p>instagram :<a href="https://www.instagram.com/lapampa_media/" target="_blank" rel="noopener">@lapampa_media</a></p>
     `,
 };
 
