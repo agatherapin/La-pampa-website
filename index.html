@@ -43,16 +43,36 @@
             height: 100%;
             object-fit: cover;
             z-index: 0;
+            border: none;
         }
 
-        header .video-overlay {
+        .video-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.71);
+            background: rgba(0, 0, 0, 0.182);
             z-index: 1;
         }
 
-        header canvas {
+        .splat-mask {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            background: #000000;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .splat-mask-top {
+            top: 0;
+            height: 55px;
+        }
+
+        .splat-mask-bottom {
+            bottom: 0;
+            height: 75px;
+        }
+
+        canvas#c {
             display: block;
             position: absolute;
             top: 0;
@@ -521,10 +541,10 @@
 
 <body>
     <header id="logo-header">
-        <video class="header-bg" autoplay muted loop playsinline>
-            <source src="https://pub-3b74a92685c244abb22363765575873e.r2.dev/Montage_lapampa.mp4">
-        </video>
+        <iframe id="viewer" class="header-bg" allow="fullscreen; xr-spatial-tracking" src="https://superspl.at/s?id=3d57362e" title="3D Viewer"></iframe>
         <div class="video-overlay"></div>
+        <div class="splat-mask splat-mask-top"></div>
+        <div class="splat-mask splat-mask-bottom"></div>
         <canvas id="c"></canvas>
         <div class="hero-tagline">
             <span class="hero-tagline-small">Le média des scènes hors&#8209;radar</span>
