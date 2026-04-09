@@ -257,6 +257,8 @@
         // ── CLICS ───────────────────────────────────────────
         document.body.addEventListener('click', (e) => {
             if (e.target.closest('#modal') || e.target.closest('#back-button') || e.target.closest('#theme-toggle')) return;
+            const contribuerModal = document.getElementById('contribuer-modal');
+            if (contribuerModal && contribuerModal.open) return;
 
             if (e.target.closest('#card-container') && isStopped) {
                 openModal(selectedArticle);

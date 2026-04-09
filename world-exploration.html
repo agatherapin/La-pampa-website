@@ -394,6 +394,8 @@
 
         document.addEventListener('wheel', (e) => {
             if (modal.classList.contains('active')) return;
+            const contribuerModal = document.getElementById('contribuer-modal');
+            if (contribuerModal && contribuerModal.open) return;
             e.preventDefault();
             introZoom = false;
             targetCameraZ = null;
